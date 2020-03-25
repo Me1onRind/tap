@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package server;
+
+service PlayServer {
+    rpc PlayOrPause(PlayRequest) returns (PlayAudioInfo) {}
+    rpc Status(Empty) returns (PlayAudioInfo) {}
+    rpc Stop(Empty) returns(Empty){}
+
+    rpc Provider(Empty) returns(ProviderReply){}
+    rpc SetLocalProvider(LocalProvider) returns (Empty){}
+
+
+    rpc ListAll(Empty) returns(QueryReplay){}
+
+    rpc Ping(Empty) returns(Empty){}
+}
+
+message PlayRequest {
+    uint32 index = 1;
+}
+
+message PlayAudioInfo {
+    uint32 status    = 1;
+    uint32 duration  = 2;
+    uint32 curr      = 3;
+    uint32 sampleRate = 4;
+    string pathinfo = 5;
+}
+
+message Empty{
+}
+
+message QueryReplay {
+    repeated string names = 1;
+}
+
+message ProviderReply {
+    int32 providerType = 1;
+    string name = 2;
+}
+
+message LocalProvider {
+    repeated string dirs = 1;
+}
