@@ -26,6 +26,8 @@ type PlayerWorker struct {
 	currAudiopath string
 	playerStatus  uint32
 
+	volume float32
+
 	Callback FinishCallback
 	mutex    sync.Mutex
 }
@@ -36,15 +38,18 @@ type AudioInfo struct {
 	Duration   uint32
 	CurrSecond uint32
 	SampleRate uint32
+	Volume     float32
 }
 
 //export playFinishCallback
 func playFinishCallback(pw unsafe.Pointer) {
 	p := (*PlayerWorker)(unsafe.Pointer(pw))
+	p.mutex.Lock()
 	p.Callback()
 	p.playerStatus = PAUSE
 	go func() {
 		p.mrReset()
+		p.mutex.Unlock()
 	}()
 	log.Println("finish play end callback")
 }
@@ -55,6 +60,8 @@ func NewPlayerWorker() *PlayerWorker {
 		playerStatus:  INIT,
 		cPlayer:       C.malloc(C.sizeof_mr_player),
 		cDecoder:      C.malloc(C.sizeof_ma_decoder),
+
+		volume: 0.5,
 	}
 
 	p.Callback = func() {
@@ -63,11 +70,15 @@ func NewPlayerWorker() *PlayerWorker {
 }
 
 func (p *PlayerWorker) Close() {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
 	p.mrStop()
 	C.free((p.cPlayer))
 }
 
 func (p *PlayerWorker) Play(audiopath string) error {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
 	log.Printf("will play %s, now status is %d\n", audiopath, p.playerStatus)
 	var err error
 	switch p.playerStatus {
@@ -97,6 +108,8 @@ func (p *PlayerWorker) Play(audiopath string) error {
 }
 
 func (p *PlayerWorker) Stop() {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
 	switch p.playerStatus {
 	case INIT:
 		return
@@ -111,6 +124,8 @@ func (p *PlayerWorker) Stop() {
 }
 
 func (p *PlayerWorker) Pause() {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
 	switch p.playerStatus {
 	case INIT:
 		return
@@ -126,8 +141,11 @@ func (p *PlayerWorker) Pause() {
 }
 
 func (p *PlayerWorker) CurrAudioInfo() (*AudioInfo, error) {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
 	a := &AudioInfo{
 		Status: uint32(p.playerStatus),
+		Volume: p.volume,
 	}
 	if p.playerStatus == INIT || p.playerStatus == STOP {
 		return a, nil
@@ -140,9 +158,20 @@ func (p *PlayerWorker) CurrAudioInfo() (*AudioInfo, error) {
 	return a, nil
 }
 
-func (p *PlayerWorker) mrInit(audiopath string) error {
+func (p *PlayerWorker) SetVolume(volume float32) {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
+	if volume < 0 || p.volume > 1 {
+		log.Printf("can't set volume to %f\n", volume)
+		return
+	}
+	p.volume = volume
+	if p.playerStatus == PLAY || p.playerStatus == PAUSE {
+		p.mrSetVolume()
+	}
+}
+
+func (p *PlayerWorker) mrInit(audiopath string) error {
 	// init decoder
 	err := C.mr_decoder_init_file((*C.ma_decoder)(p.cDecoder), C.CString(audiopath))
 	if err != nil {
@@ -151,7 +180,7 @@ func (p *PlayerWorker) mrInit(audiopath string) error {
 
 	// init device
 	err = C.mr_player_init((*C.mr_player)(p.cPlayer), (*C.ma_decoder)(p.cDecoder),
-		C.callback(C.playFinishCallback), unsafe.Pointer(p))
+		C.callback(C.playFinishCallback), unsafe.Pointer(p), (C.float)(p.volume))
 	if err != nil {
 		return errors.New(C.GoString(err))
 	}
@@ -161,8 +190,6 @@ func (p *PlayerWorker) mrInit(audiopath string) error {
 }
 
 func (p *PlayerWorker) mrStart() error {
-	p.mutex.Lock()
-	defer p.mutex.Unlock()
 	err := C.mr_player_start((*C.mr_player)(p.cPlayer))
 	if err != nil {
 		log.Println(err)
@@ -173,30 +200,26 @@ func (p *PlayerWorker) mrStart() error {
 }
 
 func (p *PlayerWorker) mrStop() {
-	p.mutex.Lock()
-	defer p.mutex.Unlock()
 	C.mr_player_destory((*C.mr_player)(p.cPlayer))
 	log.Printf("stop play: %s\n", p.currAudiopath)
 }
 
 func (p *PlayerWorker) mrPause() {
-	p.mutex.Lock()
-	defer p.mutex.Unlock()
 	C.mr_player_stop((*C.mr_player)(p.cPlayer))
 	log.Printf("pause play: %s\n", p.currAudiopath)
 }
 
 func (p *PlayerWorker) mrReset() {
-	p.mutex.Lock()
-	defer p.mutex.Unlock()
 	C.mr_player_reset((*C.mr_player)(p.cPlayer))
 	log.Printf("reset play: %s\n", p.currAudiopath)
 }
 
 func (p *PlayerWorker) mrCurrAudioinfo(info *AudioInfo) {
-	p.mutex.Lock()
-	defer p.mutex.Unlock()
 	C.mr_curr_audio_info((*C.mr_player)(p.cPlayer),
 		(*C.uint32_t)(&info.Duration), (*C.uint32_t)(&info.CurrSecond),
 		(*C.uint32_t)(&info.SampleRate))
+}
+
+func (p *PlayerWorker) mrSetVolume() {
+	C.mr_player_set_volume((*C.mr_player)(p.cPlayer), (C.float)(p.volume))
 }

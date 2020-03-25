@@ -15,6 +15,7 @@ type Window struct {
 	playerClient server.PlayServerClient
 	ps           *playStatus
 	al           *audioList
+	vc           *volumeController
 	mutex        sync.Mutex
 
 	levelOffset float64
@@ -33,16 +34,18 @@ func (w *Window) Init() {
 	maxX, maxY := termui.TerminalDimensions()
 	w.MaxX = float64(maxX)
 	w.MaxY = float64(maxY)
+	a := w.chceckPlayStatus()
+	if a == nil {
+		return
+	}
 
 	w.ps = newPlayStatus(w)
 	w.al = newAudioList(w)
+	w.vc = newVolumeController(w, a.GetVolume())
 
 	go w.ps.flushPrint()
-	a := w.ChceckPlayStatus()
-	if a != nil {
-		w.ps.flushForce <- a
-	}
-
+	w.vc.print()
+	w.ps.flushForce <- a
 	w.al.print()
 
 	for e := range termui.PollEvents() {

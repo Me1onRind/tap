@@ -14,7 +14,7 @@
 #define MR_PANIC(str) if(verbose>0){printf("%s\n", str);};return str;
 #define LOG(str) if(verbose>0) {printf("%s\n", str);}
 
-char *mr_player_init(mr_player *p, ma_decoder* decoder, callback cb, void *pw) {
+char *mr_player_init(mr_player *p, ma_decoder* decoder, callback cb, void *pw, float volume) {
     /*c(pw);*/
     p->userdata.cb = cb;
     p->userdata.player_worker = pw;
@@ -34,6 +34,7 @@ char *mr_player_init(mr_player *p, ma_decoder* decoder, callback cb, void *pw) {
     if (ma_device_init(NULL, &deviceConfig, &(p->device)) != MA_SUCCESS) {
         MR_PANIC("Failed to open playback device.");
     }
+    ma_device_set_master_volume(&(p->device), volume);
 
     LOG("player init success.");
     return NULL;
@@ -70,6 +71,10 @@ void mr_curr_audio_info(mr_player* p, uint32_t *second, uint32_t *curr, uint32_t
     *sampleRate = p->userdata.decoder->outputSampleRate;
     *second = p->userdata.total_frame / *sampleRate;
     *curr = *second * p->userdata.decoder->readPointer / p->userdata.total_frame;
+}
+
+void mr_player_set_volume(mr_player *p, float volume) {
+    ma_device_set_master_volume(&(p->device), volume);
 }
 
 void data_callback(ma_device* p_device, void* p_output, const void* p_input, ma_uint32 frame_count) {

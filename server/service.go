@@ -56,7 +56,6 @@ func PlayOrPause(index int) (*player.AudioInfo, error) {
 		}
 		return worker.CurrAudioInfo()
 	}
-
 }
 
 func Pause() {
@@ -81,4 +80,10 @@ func ListAll() ([]string, error) {
 		ret = append(ret, v.Name())
 	}
 	return ret, nil
+}
+
+func SetVolume(volume float32) {
+	mutex.Lock()
+	defer mutex.Unlock()
+	worker.SetVolume(volume)
 }

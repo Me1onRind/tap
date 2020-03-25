@@ -24,13 +24,13 @@ func newAudioList(window *Window) *audioList {
 	audioListWg.PaddingTop = 1
 	audioListWg.WrapText = false
 
-	a.window.setPersentRect(audioListWg, 0.46, 0.05, 0.4, 0.82)
 	return a
 }
 
 func (a *audioList) print() {
 	audioListWg := a.self
 
+	a.window.setPersentRect(audioListWg, 0.46, 0.05, 0.4, 0.82)
 	audioListWg.Title = "Audio file list"
 	res, _ := a.window.playerClient.ListAll(context.Background(), &server.Empty{})
 
@@ -65,15 +65,19 @@ func (a *audioList) handleEvent(e *termui.Event) {
 	case "<C-b>":
 		audioListWg.ScrollPageUp()
 	case "<Enter>":
-		a.PlayOrPause()
+		a.playOrPause()
 	case "<Space>":
-		a.PlayOrPause()
+		a.playOrPause()
+	case "<C-j>":
+		a.window.vc.down()
+	case "<C-k>":
+		a.window.vc.up()
 	default:
 	}
 }
 
-func (a *audioList) PlayOrPause() {
-	res := a.window.PlayOrPause(a.self.SelectedRow)
+func (a *audioList) playOrPause() {
+	res := a.window.playOrPause(a.self.SelectedRow)
 	if res != nil {
 		a.window.ps.flushForce <- res
 	}

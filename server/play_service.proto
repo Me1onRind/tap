@@ -8,7 +8,9 @@ service PlayServer {
     rpc Stop(Empty) returns(Empty){}
 
     rpc Provider(Empty) returns(ProviderReply){}
-    rpc SetLocalProvider(LocalProvider) returns (Empty){}
+    rpc SetLocalProvider(LocalProvider) returns(Empty){}
+
+    rpc SetVolume(VolumeRequest) returns(Empty){}
 
 
     rpc ListAll(Empty) returns(QueryReplay){}
@@ -20,12 +22,17 @@ message PlayRequest {
     uint32 index = 1;
 }
 
+message VolumeRequest {
+    float volume = 1;
+}
+
 message PlayAudioInfo {
     uint32 status    = 1;
     uint32 duration  = 2;
     uint32 curr      = 3;
-    uint32 sampleRate = 4;
-    string pathinfo = 5;
+    float volume    = 4;
+    uint32 sampleRate = 5;
+    string pathinfo = 6;
 }
 
 message Empty{

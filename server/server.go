@@ -31,6 +31,7 @@ func (service *PlayServer) PlayOrPause(ctx context.Context, request *PlayRequest
 			Duration:   authinfo.Duration,
 			Curr:       authinfo.CurrSecond,
 			Pathinfo:   authinfo.Pathinfo,
+			Volume:     authinfo.Volume,
 		}, nil
 	}
 }
@@ -45,8 +46,14 @@ func (service *PlayServer) Status(ctx context.Context, empty *Empty) (*PlayAudio
 			Duration:   authinfo.Duration,
 			Curr:       authinfo.CurrSecond,
 			Pathinfo:   authinfo.Pathinfo,
+			Volume:     authinfo.Volume,
 		}, nil
 	}
+}
+
+func (service *PlayServer) SetVolume(ctx context.Context, volume *VolumeRequest) (*Empty, error) {
+	SetVolume(volume.Volume)
+	return &Empty{}, nil
 }
 
 func (service *PlayServer) Stop(ctx context.Context, empty *Empty) (*Empty, error) {

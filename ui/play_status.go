@@ -39,22 +39,22 @@ func newPlayStatus(w *Window) *playStatus {
 
 	p.self.Title = "Status"
 	p.self.PaddingLeft = 3
-	p.window.setPersentRect(p.self, 0.07, 0.61, 0.38, 0.27)
-	p.window.setPersentRect(p.progress, 0.07, 0.87, 0.685, 0.09)
 
 	p.progress.Label = " "
 	p.countDown.Text = " 00:00/00:00"
-	p.window.setPersentRect(p.countDown, 0.758, 0.87, 0.10, 0.09)
 	return p
 }
 
 func (p *playStatus) printStatus() {
 	pg := p.self
 	pg.Text = p.text()
+	p.window.setPersentRect(pg, 0.14, 0.61, 0.315, 0.27)
 	p.window.syncPrint(pg)
 }
 
 func (p *playStatus) printPro() {
+	p.window.setPersentRect(p.progress, 0.07, 0.87, 0.685, 0.09)
+	p.window.setPersentRect(p.countDown, 0.758, 0.87, 0.10, 0.09)
 	p.window.syncPrint(p.countDown)
 	p.window.syncPrint(p.progress)
 }

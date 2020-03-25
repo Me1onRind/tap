@@ -33,11 +33,12 @@ struct _mr_player {
     mr_userdata userdata;
 };
 
-char *mr_player_init(mr_player *p, ma_decoder* decoder, callback cb, void *pw); // 初始化
-char *mr_player_start(mr_player *p); // 播放
-void mr_player_stop(mr_player *p); // 停止设备播放
-void mr_player_destory(mr_player *p); // 销毁
-void mr_player_reset(mr_player *p); // 输入reset
+char *mr_player_init(mr_player *p, ma_decoder* decoder, callback cb, void *pw, float volume); // init
+char *mr_player_start(mr_player *p); // playing
+void mr_player_stop(mr_player *p); // stop
+void mr_player_destory(mr_player *p); // uninit
+void mr_player_reset(mr_player *p); // reset
+void mr_player_set_volume(mr_player *p, float volume); // set volume
 
 void mr_curr_audio_info(mr_player *p, uint32_t *second, uint32_t *curr, uint32_t *sampleRate);
 
