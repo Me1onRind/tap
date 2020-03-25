@@ -39,7 +39,7 @@ func (w *Window) SetLocalProvider(dirs []string) bool {
 		Dirs: dirs,
 	}
 
-	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*_TIME_OUT)
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
 	_, err := w.playerClient.SetLocalProvider(ctx, &request)
 	if err != nil {
@@ -50,7 +50,7 @@ func (w *Window) SetLocalProvider(dirs []string) bool {
 }
 
 func (w *Window) PlayOrPause(index int) *server.PlayAudioInfo {
-	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*_TIME_OUT)
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
 	res, err := w.playerClient.PlayOrPause(ctx, &server.PlayRequest{
 		Index: uint32(index),
