@@ -7,6 +7,6 @@ type AudioItem interface {
 type Provider interface {
 	ListAll() ([]AudioItem, error)
 	Search(input string) ([]AudioItem, error)
-	Filepath(index int) (string, error)
+	Filepath(name string) (string, error)
 	Flush()
 }

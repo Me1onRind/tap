@@ -1,11 +1,12 @@
 package local
 
 import (
-	"errors"
-	"tap/backend"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
+	"regexp"
+	"tap/backend"
 )
 
 type LocalProvider struct {
@@ -50,17 +51,35 @@ func (p *LocalProvider) ListAll() ([]backend.AudioItem, error) {
 	return files, nil
 }
 
-func (p *LocalProvider) Search(input string) ([]backend.AudioItem, error) {
-	return p.ListAll()
+func (p *LocalProvider) Search(reg string) ([]backend.AudioItem, error) {
+	log.Println(reg)
+	var files []backend.AudioItem
+	var err error
+	files = p.files[p.currDir]
+	if files == nil {
+		files, err = p.ListAll()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	regex, err := regexp.Compile(reg)
+	if err != nil {
+		return nil, err
+	}
+	var ret []backend.AudioItem
+
+	for _, v := range files {
+		fi := v.(os.FileInfo)
+		if regex.MatchString(fi.Name()) {
+			ret = append(ret, v)
+		}
+	}
+	return ret, nil
 }
 
-func (p *LocalProvider) Filepath(index int) (string, error) {
-	items := p.files[p.currDir]
-	if index >= len(items) {
-		return "", errors.New("Out of range")
-	}
-	fi := items[index].(os.FileInfo)
-	return filepath.Abs(p.currDir + "/" + fi.Name())
+func (p *LocalProvider) Filepath(name string) (string, error) {
+	return filepath.Abs(p.currDir + "/" + name)
 }
 
 func (p *LocalProvider) Flush() {

@@ -28,7 +28,7 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type PlayRequest struct {
-	Index uint32 `protobuf:"varint,1,opt,name=index,proto3" json:"index,omitempty"`
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 }
 
 func (m *PlayRequest) Reset()         { *m = PlayRequest{} }
@@ -64,11 +64,11 @@ func (m *PlayRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_PlayRequest proto.InternalMessageInfo
 
-func (m *PlayRequest) GetIndex() uint32 {
+func (m *PlayRequest) GetName() string {
 	if m != nil {
-		return m.Index
+		return m.Name
 	}
-	return 0
+	return ""
 }
 
 type VolumeRequest struct {
@@ -115,6 +115,50 @@ func (m *VolumeRequest) GetVolume() float32 {
 	return 0
 }
 
+type SearchRequest struct {
+	Input string `protobuf:"bytes,1,opt,name=input,proto3" json:"input,omitempty"`
+}
+
+func (m *SearchRequest) Reset()         { *m = SearchRequest{} }
+func (m *SearchRequest) String() string { return proto.CompactTextString(m) }
+func (*SearchRequest) ProtoMessage()    {}
+func (*SearchRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_619856292df9b42b, []int{2}
+}
+func (m *SearchRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *SearchRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_SearchRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *SearchRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SearchRequest.Merge(m, src)
+}
+func (m *SearchRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *SearchRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_SearchRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SearchRequest proto.InternalMessageInfo
+
+func (m *SearchRequest) GetInput() string {
+	if m != nil {
+		return m.Input
+	}
+	return ""
+}
+
 type PlayAudioInfo struct {
 	Status     uint32  `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
 	Duration   uint32  `protobuf:"varint,2,opt,name=duration,proto3" json:"duration,omitempty"`
@@ -122,13 +166,14 @@ type PlayAudioInfo struct {
 	Volume     float32 `protobuf:"fixed32,4,opt,name=volume,proto3" json:"volume,omitempty"`
 	SampleRate uint32  `protobuf:"varint,5,opt,name=sampleRate,proto3" json:"sampleRate,omitempty"`
 	Pathinfo   string  `protobuf:"bytes,6,opt,name=pathinfo,proto3" json:"pathinfo,omitempty"`
+	Name       string  `protobuf:"bytes,7,opt,name=name,proto3" json:"name,omitempty"`
 }
 
 func (m *PlayAudioInfo) Reset()         { *m = PlayAudioInfo{} }
 func (m *PlayAudioInfo) String() string { return proto.CompactTextString(m) }
 func (*PlayAudioInfo) ProtoMessage()    {}
 func (*PlayAudioInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_619856292df9b42b, []int{2}
+	return fileDescriptor_619856292df9b42b, []int{3}
 }
 func (m *PlayAudioInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -199,6 +244,13 @@ func (m *PlayAudioInfo) GetPathinfo() string {
 	return ""
 }
 
+func (m *PlayAudioInfo) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
 type Empty struct {
 }
 
@@ -206,7 +258,7 @@ func (m *Empty) Reset()         { *m = Empty{} }
 func (m *Empty) String() string { return proto.CompactTextString(m) }
 func (*Empty) ProtoMessage()    {}
 func (*Empty) Descriptor() ([]byte, []int) {
-	return fileDescriptor_619856292df9b42b, []int{3}
+	return fileDescriptor_619856292df9b42b, []int{4}
 }
 func (m *Empty) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -243,7 +295,7 @@ func (m *QueryReplay) Reset()         { *m = QueryReplay{} }
 func (m *QueryReplay) String() string { return proto.CompactTextString(m) }
 func (*QueryReplay) ProtoMessage()    {}
 func (*QueryReplay) Descriptor() ([]byte, []int) {
-	return fileDescriptor_619856292df9b42b, []int{4}
+	return fileDescriptor_619856292df9b42b, []int{5}
 }
 func (m *QueryReplay) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -288,7 +340,7 @@ func (m *ProviderReply) Reset()         { *m = ProviderReply{} }
 func (m *ProviderReply) String() string { return proto.CompactTextString(m) }
 func (*ProviderReply) ProtoMessage()    {}
 func (*ProviderReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_619856292df9b42b, []int{5}
+	return fileDescriptor_619856292df9b42b, []int{6}
 }
 func (m *ProviderReply) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -339,7 +391,7 @@ func (m *LocalProvider) Reset()         { *m = LocalProvider{} }
 func (m *LocalProvider) String() string { return proto.CompactTextString(m) }
 func (*LocalProvider) ProtoMessage()    {}
 func (*LocalProvider) Descriptor() ([]byte, []int) {
-	return fileDescriptor_619856292df9b42b, []int{6}
+	return fileDescriptor_619856292df9b42b, []int{7}
 }
 func (m *LocalProvider) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -378,6 +430,7 @@ func (m *LocalProvider) GetDirs() []string {
 func init() {
 	proto.RegisterType((*PlayRequest)(nil), "server.PlayRequest")
 	proto.RegisterType((*VolumeRequest)(nil), "server.VolumeRequest")
+	proto.RegisterType((*SearchRequest)(nil), "server.SearchRequest")
 	proto.RegisterType((*PlayAudioInfo)(nil), "server.PlayAudioInfo")
 	proto.RegisterType((*Empty)(nil), "server.Empty")
 	proto.RegisterType((*QueryReplay)(nil), "server.QueryReplay")
@@ -388,36 +441,37 @@ func init() {
 func init() { proto.RegisterFile("play_service.proto", fileDescriptor_619856292df9b42b) }
 
 var fileDescriptor_619856292df9b42b = []byte{
-	// 452 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x53, 0x4d, 0x6f, 0xd4, 0x30,
-	0x10, 0x4d, 0xba, 0xbb, 0x69, 0x77, 0x20, 0x12, 0x32, 0x1f, 0x8a, 0x7a, 0x88, 0x2a, 0x57, 0x82,
-	0x3d, 0x2d, 0xa8, 0xbd, 0xc1, 0xa9, 0x48, 0x08, 0x21, 0x55, 0x62, 0x71, 0x10, 0x57, 0x64, 0x36,
-	0x53, 0xb0, 0x94, 0x8d, 0x83, 0x63, 0xaf, 0xc8, 0xbf, 0xe0, 0x2f, 0x70, 0xe6, 0x8f, 0x70, 0xec,
-	0x91, 0x23, 0xda, 0xfd, 0x23, 0xc8, 0xf6, 0x26, 0x24, 0xad, 0x56, 0xdc, 0xfc, 0x5e, 0xde, 0xcc,
-	0x78, 0xde, 0x73, 0x80, 0x54, 0x05, 0x6f, 0x3e, 0xd6, 0xa8, 0xd6, 0x62, 0x89, 0xf3, 0x4a, 0x49,
-	0x2d, 0x49, 0x64, 0x21, 0x2a, 0x7a, 0x0a, 0x77, 0x16, 0x05, 0x6f, 0x18, 0x7e, 0x35, 0x58, 0x6b,
-	0xf2, 0x00, 0x26, 0xa2, 0xcc, 0xf1, 0x5b, 0x12, 0x9e, 0x84, 0xb3, 0x98, 0x79, 0x40, 0x9f, 0x40,
-	0xfc, 0x41, 0x16, 0x66, 0x85, 0xad, 0xec, 0x11, 0x44, 0x6b, 0x47, 0x38, 0xdd, 0x01, 0xdb, 0x21,
-	0xfa, 0x33, 0x84, 0xd8, 0xb6, 0xbb, 0x30, 0xb9, 0x90, 0x6f, 0xca, 0x2b, 0x69, 0x95, 0xb5, 0xe6,
-	0xda, 0xd4, 0xbb, 0x8e, 0x3b, 0x44, 0x8e, 0xe1, 0x28, 0x37, 0x8a, 0x6b, 0x21, 0xcb, 0xe4, 0xc0,
-	0x7d, 0xe9, 0x30, 0x21, 0x30, 0x5e, 0x1a, 0xa5, 0x92, 0x91, 0xe3, 0xdd, 0xb9, 0x37, 0x71, 0xdc,
-	0x9f, 0x48, 0x52, 0x80, 0x9a, 0xaf, 0xaa, 0x02, 0x19, 0xd7, 0x98, 0x4c, 0x5c, 0x45, 0x8f, 0xb1,
-	0x73, 0x2a, 0xae, 0xbf, 0x88, 0xf2, 0x4a, 0x26, 0xd1, 0x49, 0x38, 0x9b, 0xb2, 0x0e, 0xd3, 0x43,
-	0x98, 0xbc, 0x5a, 0x55, 0xba, 0xb1, 0x26, 0xbc, 0x33, 0xa8, 0x1a, 0x86, 0xd6, 0x29, 0x6b, 0x42,
-	0xc9, 0x57, 0x68, 0xaf, 0x3c, 0x9a, 0x4d, 0x99, 0x07, 0xf4, 0x35, 0xc4, 0x0b, 0x25, 0xd7, 0x22,
-	0x47, 0x65, 0x75, 0x0d, 0xa1, 0x70, 0xb7, 0xda, 0x11, 0xef, 0x9b, 0xca, 0x5b, 0x31, 0x61, 0x03,
-	0xce, 0xae, 0x62, 0xab, 0xdd, 0x8a, 0x53, 0xe6, 0xce, 0xf4, 0x14, 0xe2, 0x4b, 0xb9, 0xe4, 0x45,
-	0xdb, 0xcd, 0x8a, 0x72, 0xa1, 0xda, 0x71, 0xee, 0x7c, 0xf6, 0x63, 0x04, 0x60, 0x9d, 0xcc, 0x5c,
-	0x4c, 0xe4, 0x85, 0x8f, 0xe9, 0xad, 0x5a, 0x70, 0x53, 0x23, 0xb9, 0x3f, 0xf7, 0xf1, 0xcd, 0x7b,
-	0xd9, 0x1d, 0x3f, 0xec, 0x93, 0x5d, 0x02, 0x34, 0x20, 0xcf, 0x20, 0xca, 0xbc, 0xeb, 0x71, 0x2b,
-	0x71, 0x7b, 0xef, 0xaf, 0x78, 0x0c, 0xe3, 0x4c, 0xcb, 0xea, 0xa6, 0x7e, 0x08, 0x69, 0x40, 0xce,
-	0xe0, 0xa8, 0xdb, 0x62, 0x6f, 0xef, 0xbe, 0x69, 0x34, 0x20, 0xcf, 0xe1, 0x5e, 0x86, 0x7a, 0xe8,
-	0x40, 0x27, 0x1e, 0xd0, 0xb7, 0xe7, 0x9d, 0xc3, 0x34, 0x43, 0xed, 0xdf, 0xe2, 0xbf, 0xa2, 0xc1,
-	0xdb, 0xbc, 0x5d, 0xf4, 0x14, 0x0e, 0x2f, 0x45, 0xad, 0x2f, 0x8a, 0xe2, 0xe6, 0x1d, 0x3b, 0x1b,
-	0x7b, 0xe9, 0xfb, 0xed, 0x17, 0xa2, 0xfc, 0xfc, 0xbf, 0xed, 0x5f, 0x26, 0xbf, 0x36, 0x69, 0x78,
-	0xbd, 0x49, 0xc3, 0x3f, 0x9b, 0x34, 0xfc, 0xbe, 0x4d, 0x83, 0xeb, 0x6d, 0x1a, 0xfc, 0xde, 0xa6,
-	0xc1, 0xa7, 0xc8, 0xfd, 0x64, 0xe7, 0x7f, 0x03, 0x00, 0x00, 0xff, 0xff, 0x5e, 0x95, 0x7a, 0x06,
-	0x7a, 0x03, 0x00, 0x00,
+	// 479 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x53, 0xcb, 0x6e, 0xd4, 0x30,
+	0x14, 0x4d, 0xe6, 0x91, 0x69, 0x6f, 0x89, 0x84, 0xcc, 0x43, 0x51, 0x17, 0x11, 0xb8, 0xa2, 0xb0,
+	0x1a, 0x50, 0x2b, 0xb1, 0x80, 0x55, 0x91, 0x10, 0x42, 0xaa, 0xc4, 0x90, 0x20, 0xb6, 0xc8, 0xcc,
+	0xdc, 0x52, 0x4b, 0x99, 0xd8, 0x38, 0xf6, 0x48, 0xf9, 0x0b, 0xfe, 0x88, 0x2d, 0xcb, 0x2e, 0x61,
+	0x87, 0x66, 0x7e, 0x04, 0xd9, 0x99, 0xa4, 0x4e, 0xab, 0x11, 0x3b, 0x9f, 0xeb, 0x73, 0x5f, 0xe7,
+	0xd8, 0x40, 0x64, 0xc1, 0xea, 0x2f, 0x15, 0xaa, 0x15, 0x9f, 0xe3, 0x54, 0x2a, 0xa1, 0x05, 0x89,
+	0x2c, 0x44, 0x45, 0x1f, 0xc3, 0xc1, 0xac, 0x60, 0x75, 0x86, 0xdf, 0x0d, 0x56, 0x9a, 0x10, 0x18,
+	0x95, 0x6c, 0x89, 0x49, 0xf8, 0x28, 0x7c, 0xb6, 0x9f, 0xb9, 0x33, 0x7d, 0x0a, 0xf1, 0x67, 0x51,
+	0x98, 0x25, 0xb6, 0xa4, 0x87, 0x10, 0xad, 0x5c, 0xc0, 0xd1, 0x06, 0xd9, 0x16, 0xd1, 0x27, 0x10,
+	0xe7, 0xc8, 0xd4, 0xfc, 0xb2, 0x25, 0xde, 0x87, 0x31, 0x2f, 0xa5, 0xd1, 0xdb, 0x72, 0x0d, 0xa0,
+	0x3f, 0x43, 0x88, 0x6d, 0xcf, 0x33, 0xb3, 0xe0, 0xe2, 0x7d, 0x79, 0x21, 0x6c, 0xc1, 0x4a, 0x33,
+	0x6d, 0x2a, 0x47, 0x8c, 0xb3, 0x2d, 0x22, 0x87, 0xb0, 0xb7, 0x30, 0x8a, 0x69, 0x2e, 0xca, 0x64,
+	0xe0, 0x6e, 0x3a, 0x6c, 0x27, 0x9d, 0x1b, 0xa5, 0x92, 0xa1, 0x8b, 0xbb, 0xb3, 0x37, 0xd8, 0xc8,
+	0x1f, 0x8c, 0xa4, 0x00, 0x15, 0x5b, 0xca, 0x02, 0x33, 0xa6, 0x31, 0x19, 0xbb, 0x0c, 0x2f, 0x62,
+	0xfb, 0x48, 0xa6, 0x2f, 0x79, 0x79, 0x21, 0x92, 0xc8, 0x8d, 0xda, 0xe1, 0x4e, 0x91, 0x89, 0xa7,
+	0xc8, 0x04, 0xc6, 0x6f, 0x97, 0x52, 0xd7, 0xf4, 0x08, 0x0e, 0x3e, 0x1a, 0x54, 0x75, 0x86, 0x56,
+	0x62, 0xbb, 0xaf, 0xbd, 0xb7, 0x6b, 0x0c, 0xed, 0xbe, 0x0e, 0xd0, 0x77, 0x10, 0xcf, 0x94, 0x58,
+	0xf1, 0x05, 0x2a, 0xcb, 0xab, 0x09, 0x85, 0x3b, 0x72, 0x1b, 0xf8, 0x54, 0xcb, 0x46, 0xc5, 0x71,
+	0xd6, 0x8b, 0x75, 0x6d, 0x07, 0x5e, 0xdb, 0x23, 0x88, 0xcf, 0xc5, 0x9c, 0x15, 0x6d, 0x35, 0x4b,
+	0x5a, 0x70, 0xd5, 0xb6, 0x73, 0xe7, 0x93, 0x3f, 0x43, 0x00, 0xab, 0x6e, 0xee, 0xfc, 0x25, 0xaf,
+	0x1b, 0x7f, 0x3f, 0xa8, 0x19, 0x33, 0x15, 0x92, 0x7b, 0xd3, 0xc6, 0xf7, 0xa9, 0x67, 0xfa, 0xe1,
+	0x03, 0x3f, 0xd8, 0xb9, 0x42, 0x03, 0xf2, 0x02, 0xa2, 0xbc, 0x71, 0x22, 0x6e, 0x29, 0x6e, 0xef,
+	0xdd, 0x19, 0xc7, 0x30, 0xca, 0xb5, 0x90, 0x37, 0xf9, 0x7d, 0x48, 0x03, 0x72, 0x02, 0x7b, 0xdd,
+	0x16, 0x3b, 0x6b, 0xfb, 0xa2, 0xd1, 0x80, 0xbc, 0x82, 0xbb, 0x39, 0xea, 0xbe, 0x02, 0x1d, 0xb9,
+	0x17, 0xbe, 0xdd, 0xef, 0x14, 0xf6, 0x73, 0xd4, 0xcd, 0x33, 0xbe, 0x4e, 0xea, 0x3d, 0xeb, 0xdb,
+	0x49, 0xcf, 0x61, 0x72, 0xce, 0x2b, 0x7d, 0x56, 0x14, 0x37, 0x67, 0xec, 0x64, 0xf4, 0xdc, 0xa7,
+	0x01, 0x79, 0x09, 0x51, 0xf3, 0x01, 0xae, 0x5b, 0xf4, 0x3e, 0xc4, 0xae, 0xbc, 0x63, 0x18, 0xcd,
+	0x78, 0xf9, 0xed, 0x7f, 0xaa, 0xbd, 0x49, 0x7e, 0xad, 0xd3, 0xf0, 0x6a, 0x9d, 0x86, 0x7f, 0xd7,
+	0x69, 0xf8, 0x63, 0x93, 0x06, 0x57, 0x9b, 0x34, 0xf8, 0xbd, 0x49, 0x83, 0xaf, 0x91, 0xfb, 0xd5,
+	0xa7, 0xff, 0x02, 0x00, 0x00, 0xff, 0xff, 0x82, 0xf3, 0x2a, 0x54, 0xeb, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -439,6 +493,7 @@ type PlayServerClient interface {
 	SetLocalProvider(ctx context.Context, in *LocalProvider, opts ...grpc.CallOption) (*Empty, error)
 	SetVolume(ctx context.Context, in *VolumeRequest, opts ...grpc.CallOption) (*Empty, error)
 	ListAll(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*QueryReplay, error)
+	Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*QueryReplay, error)
 	Ping(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
 }
 
@@ -513,6 +568,15 @@ func (c *playServerClient) ListAll(ctx context.Context, in *Empty, opts ...grpc.
 	return out, nil
 }
 
+func (c *playServerClient) Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*QueryReplay, error) {
+	out := new(QueryReplay)
+	err := c.cc.Invoke(ctx, "/server.PlayServer/Search", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *playServerClient) Ping(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
 	err := c.cc.Invoke(ctx, "/server.PlayServer/Ping", in, out, opts...)
@@ -531,6 +595,7 @@ type PlayServerServer interface {
 	SetLocalProvider(context.Context, *LocalProvider) (*Empty, error)
 	SetVolume(context.Context, *VolumeRequest) (*Empty, error)
 	ListAll(context.Context, *Empty) (*QueryReplay, error)
+	Search(context.Context, *SearchRequest) (*QueryReplay, error)
 	Ping(context.Context, *Empty) (*Empty, error)
 }
 
@@ -558,6 +623,9 @@ func (*UnimplementedPlayServerServer) SetVolume(ctx context.Context, req *Volume
 }
 func (*UnimplementedPlayServerServer) ListAll(ctx context.Context, req *Empty) (*QueryReplay, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListAll not implemented")
+}
+func (*UnimplementedPlayServerServer) Search(ctx context.Context, req *SearchRequest) (*QueryReplay, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Search not implemented")
 }
 func (*UnimplementedPlayServerServer) Ping(ctx context.Context, req *Empty) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
@@ -693,6 +761,24 @@ func _PlayServer_ListAll_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PlayServer_Search_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PlayServerServer).Search(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/server.PlayServer/Search",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PlayServerServer).Search(ctx, req.(*SearchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PlayServer_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Empty)
 	if err := dec(in); err != nil {
@@ -744,6 +830,10 @@ var _PlayServer_serviceDesc = grpc.ServiceDesc{
 			Handler:    _PlayServer_ListAll_Handler,
 		},
 		{
+			MethodName: "Search",
+			Handler:    _PlayServer_Search_Handler,
+		},
+		{
 			MethodName: "Ping",
 			Handler:    _PlayServer_Ping_Handler,
 		},
@@ -772,10 +862,12 @@ func (m *PlayRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.Index != 0 {
-		i = encodeVarintPlayService(dAtA, i, uint64(m.Index))
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintPlayService(dAtA, i, uint64(len(m.Name)))
 		i--
-		dAtA[i] = 0x8
+		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -809,6 +901,36 @@ func (m *VolumeRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *SearchRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *SearchRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SearchRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Input) > 0 {
+		i -= len(m.Input)
+		copy(dAtA[i:], m.Input)
+		i = encodeVarintPlayService(dAtA, i, uint64(len(m.Input)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *PlayAudioInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -829,6 +951,13 @@ func (m *PlayAudioInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintPlayService(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0x3a
+	}
 	if len(m.Pathinfo) > 0 {
 		i -= len(m.Pathinfo)
 		copy(dAtA[i:], m.Pathinfo)
@@ -1004,8 +1133,9 @@ func (m *PlayRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.Index != 0 {
-		n += 1 + sovPlayService(uint64(m.Index))
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovPlayService(uint64(l))
 	}
 	return n
 }
@@ -1018,6 +1148,19 @@ func (m *VolumeRequest) Size() (n int) {
 	_ = l
 	if m.Volume != 0 {
 		n += 5
+	}
+	return n
+}
+
+func (m *SearchRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Input)
+	if l > 0 {
+		n += 1 + l + sovPlayService(uint64(l))
 	}
 	return n
 }
@@ -1044,6 +1187,10 @@ func (m *PlayAudioInfo) Size() (n int) {
 		n += 1 + sovPlayService(uint64(m.SampleRate))
 	}
 	l = len(m.Pathinfo)
+	if l > 0 {
+		n += 1 + l + sovPlayService(uint64(l))
+	}
+	l = len(m.Name)
 	if l > 0 {
 		n += 1 + l + sovPlayService(uint64(l))
 	}
@@ -1141,10 +1288,10 @@ func (m *PlayRequest) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Index", wireType)
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
 			}
-			m.Index = 0
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowPlayService
@@ -1154,11 +1301,24 @@ func (m *PlayRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Index |= uint32(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPlayService
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPlayService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipPlayService(dAtA[iNdEx:])
@@ -1223,6 +1383,91 @@ func (m *VolumeRequest) Unmarshal(dAtA []byte) error {
 			v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
 			iNdEx += 4
 			m.Volume = float32(math.Float32frombits(v))
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPlayService(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPlayService
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPlayService
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *SearchRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPlayService
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: SearchRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: SearchRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Input", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPlayService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPlayService
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPlayService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Input = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipPlayService(dAtA[iNdEx:])
@@ -1394,6 +1639,38 @@ func (m *PlayAudioInfo) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Pathinfo = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPlayService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPlayService
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPlayService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

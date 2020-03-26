@@ -14,16 +14,21 @@ service PlayServer {
 
 
     rpc ListAll(Empty) returns(QueryReplay){}
+    rpc Search(SearchRequest) returns(QueryReplay){}
 
     rpc Ping(Empty) returns(Empty){}
 }
 
 message PlayRequest {
-    uint32 index = 1;
+    string name = 1;
 }
 
 message VolumeRequest {
     float volume = 1;
+}
+
+message SearchRequest {
+    string input = 1;
 }
 
 message PlayAudioInfo {
@@ -33,6 +38,7 @@ message PlayAudioInfo {
     float volume    = 4;
     uint32 sampleRate = 5;
     string pathinfo = 6;
+    string name = 7;
 }
 
 message Empty{

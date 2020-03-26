@@ -32,7 +32,7 @@ func Status() (*player.AudioInfo, error) {
 	return worker.CurrAudioInfo()
 }
 
-func PlayOrPause(index int) (*player.AudioInfo, error) {
+func PlayOrPause(name string) (*player.AudioInfo, error) {
 	mutex.Lock()
 	defer mutex.Unlock()
 
@@ -41,7 +41,7 @@ func PlayOrPause(index int) (*player.AudioInfo, error) {
 		return nil, err
 	}
 
-	audiopath, err := provider.Filepath(index)
+	audiopath, err := provider.Filepath(name)
 	if err != nil {
 		return nil, err
 	}
@@ -72,6 +72,18 @@ func Stop() {
 
 func ListAll() ([]string, error) {
 	list, err := provider.ListAll()
+	if err != nil {
+		return nil, err
+	}
+	var ret []string
+	for _, v := range list {
+		ret = append(ret, v.Name())
+	}
+	return ret, nil
+}
+
+func Search(input string) ([]string, error) {
+	list, err := provider.Search(input)
 	if err != nil {
 		return nil, err
 	}

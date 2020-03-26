@@ -3,6 +3,7 @@ package ui
 import (
 	//"context"
 	"fmt"
+	"github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
 	"path/filepath"
 	"tap/player"
@@ -42,24 +43,25 @@ func newPlayStatus(w *Window) *playStatus {
 
 	p.progress.Label = " "
 	p.countDown.Text = " 00:00/00:00"
+
+	p.window.setPersentRect(p.self, 0.14, 0.61, 0.315, 0.27)
+	p.window.setPersentRect(p.progress, 0.07, 0.87, 0.685, 0.09)
+	p.window.setPersentRect(p.countDown, 0.758, 0.87, 0.10, 0.09)
 	return p
 }
 
 func (p *playStatus) printStatus() {
 	pg := p.self
 	pg.Text = p.text()
-	p.window.setPersentRect(pg, 0.14, 0.61, 0.315, 0.27)
 	p.window.syncPrint(pg)
 }
 
 func (p *playStatus) printPro() {
-	p.window.setPersentRect(p.progress, 0.07, 0.87, 0.685, 0.09)
-	p.window.setPersentRect(p.countDown, 0.758, 0.87, 0.10, 0.09)
 	p.window.syncPrint(p.countDown)
 	p.window.syncPrint(p.progress)
 }
 
-func (p *playStatus) flushPrint() {
+func (p *playStatus) asyncPrint() {
 	p.printPro()
 	p.printStatus()
 	ticker := time.NewTicker(time.Second)
@@ -99,10 +101,13 @@ func (p *playStatus) updateProgress() {
 	switch p.Status {
 	case player.PLAY:
 		p.StatusLabel = "Playing ▶️  "
+		p.self.BorderStyle = termui.NewStyle(termui.ColorYellow)
 	case player.PAUSE:
 		p.StatusLabel = "Pause ⏸  "
+		p.self.BorderStyle = termui.NewStyle(termui.ColorWhite)
 	default:
 		p.StatusLabel = "Stop ⏹  "
+		p.self.BorderStyle = termui.NewStyle(termui.ColorWhite)
 	}
 }
 

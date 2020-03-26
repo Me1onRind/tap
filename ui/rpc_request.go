@@ -49,11 +49,11 @@ func (w *Window) ServerIsHealthLive() bool {
 	return true
 }
 
-func (w *Window) playOrPause(index int) *server.PlayAudioInfo {
+func (w *Window) playOrPause(name string) *server.PlayAudioInfo {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
 	res, err := w.playerClient.PlayOrPause(ctx, &server.PlayRequest{
-		Index: uint32(index),
+		Name: name,
 	})
 	if err != nil {
 		log.Println(err)
@@ -73,4 +73,26 @@ func (w *Window) setVolume(volume float32) bool {
 		return false
 	}
 	return true
+}
+
+func (w *Window) listAll() []string {
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
+	defer cancel()
+	res, err := w.playerClient.ListAll(ctx, &server.Empty{})
+	if err != nil {
+		return []string{}
+	}
+	return res.GetNames()
+}
+
+func (w *Window) search(input string) []string {
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
+	defer cancel()
+	res, err := w.playerClient.Search(ctx, &server.SearchRequest{
+		Input: input,
+	})
+	if err != nil {
+		return []string{}
+	}
+	return res.GetNames()
 }

@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"path/filepath"
 	"tap/backend/local"
 )
 
@@ -17,12 +18,12 @@ const (
 type PlayServer struct {
 }
 
-func (service *PlayServer) Ping(ctx context.Context, empty *Empty) (*Empty, error) {
+func (server *PlayServer) Ping(ctx context.Context, empty *Empty) (*Empty, error) {
 	return &Empty{}, nil
 }
 
-func (service *PlayServer) PlayOrPause(ctx context.Context, request *PlayRequest) (*PlayAudioInfo, error) {
-	if authinfo, err := PlayOrPause(int(request.Index)); err != nil {
+func (server *PlayServer) PlayOrPause(ctx context.Context, request *PlayRequest) (*PlayAudioInfo, error) {
+	if authinfo, err := PlayOrPause(request.Name); err != nil {
 		return nil, err
 	} else {
 		return &PlayAudioInfo{
@@ -32,11 +33,12 @@ func (service *PlayServer) PlayOrPause(ctx context.Context, request *PlayRequest
 			Curr:       authinfo.CurrSecond,
 			Pathinfo:   authinfo.Pathinfo,
 			Volume:     authinfo.Volume,
+			Name:       filepath.Base(authinfo.Pathinfo),
 		}, nil
 	}
 }
 
-func (service *PlayServer) Status(ctx context.Context, empty *Empty) (*PlayAudioInfo, error) {
+func (server *PlayServer) Status(ctx context.Context, empty *Empty) (*PlayAudioInfo, error) {
 	if authinfo, err := Status(); err != nil {
 		return nil, err
 	} else {
@@ -47,21 +49,22 @@ func (service *PlayServer) Status(ctx context.Context, empty *Empty) (*PlayAudio
 			Curr:       authinfo.CurrSecond,
 			Pathinfo:   authinfo.Pathinfo,
 			Volume:     authinfo.Volume,
+			Name:       filepath.Base(authinfo.Pathinfo),
 		}, nil
 	}
 }
 
-func (service *PlayServer) SetVolume(ctx context.Context, volume *VolumeRequest) (*Empty, error) {
+func (server *PlayServer) SetVolume(ctx context.Context, volume *VolumeRequest) (*Empty, error) {
 	SetVolume(volume.Volume)
 	return &Empty{}, nil
 }
 
-func (service *PlayServer) Stop(ctx context.Context, empty *Empty) (*Empty, error) {
+func (server *PlayServer) Stop(ctx context.Context, empty *Empty) (*Empty, error) {
 	Stop()
 	return &Empty{}, nil
 }
 
-func (service *PlayServer) ListAll(ctx context.Context, empty *Empty) (*QueryReplay, error) {
+func (server *PlayServer) ListAll(ctx context.Context, empty *Empty) (*QueryReplay, error) {
 	all, err := ListAll()
 	if err != nil {
 		return nil, err
@@ -69,7 +72,19 @@ func (service *PlayServer) ListAll(ctx context.Context, empty *Empty) (*QueryRep
 	return &QueryReplay{Names: all}, nil
 }
 
-func (service *PlayServer) SetLocalProvider(ctx context.Context,
+func (server *PlayServer) Search(ctx context.Context, request *SearchRequest) (*QueryReplay, error) {
+	if len(request.Input) == 0 {
+		return server.ListAll(ctx, nil)
+	}
+	all, err := Search(request.Input)
+	if err != nil {
+		return nil, err
+	}
+
+	return &QueryReplay{Names: all}, nil
+}
+
+func (server *PlayServer) SetLocalProvider(ctx context.Context,
 	localPrivoder *LocalProvider) (*Empty, error) {
 	if len(localPrivoder.Dirs) == 0 {
 		return nil, errors.New("Dirs can't be length 0")
@@ -78,7 +93,7 @@ func (service *PlayServer) SetLocalProvider(ctx context.Context,
 	return &Empty{}, nil
 }
 
-func (service *PlayServer) Provider(ctx context.Context, empty *Empty) (*ProviderReply, error) {
+func (server *PlayServer) Provider(ctx context.Context, empty *Empty) (*ProviderReply, error) {
 	return &ProviderReply{
 		ProviderType: int32(providerType),
 		Name:         providerName,
