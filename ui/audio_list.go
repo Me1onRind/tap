@@ -50,13 +50,17 @@ func (a *audioList) Leave() {
 func (a *audioList) InitPrint(info *server.PlayAudioInfo) {
 	a.self.Rows = a.window.ListAll()
 	a.playName = info.Name
+	for k, v := range a.self.Rows {
+		if v == a.playName {
+			a.self.SelectedRow = k
+			break
+		}
+	}
 }
 
 func (a *audioList) Print() {
 	a.self.Title = "Audio file list"
-	var k int
-	var v string
-	for k, v = range a.self.Rows {
+	for k, v := range a.self.Rows {
 		if v == a.playName {
 			a.self.Rows[k] = fmt.Sprintf("[%s](fg:yellow)", v)
 			termui.Render(a.self)
@@ -107,5 +111,6 @@ func (a *audioList) playOrPause() {
 		return
 	}
 	info := a.window.PlayOrPause(a.self.Rows[a.self.SelectedRow])
+	a.playName = info.Name
 	a.window.ps.Notify(info)
 }
