@@ -2,19 +2,20 @@ package ui
 
 import (
 	"github.com/gizak/termui/v3"
-	//"github.com/gizak/termui/v3/widgets"
-	sll "github.com/emirpasic/gods/lists/singlylinkedlist"
-	//"github.com/emirpasic/gods/utils"
+	//"log"
 	"math"
-	"sync"
 	"tap/server"
 )
 
 type item interface {
-	entry()
-	leave()
-	handleEvent(intput string)
-	print()
+	Entry()
+	Leave()
+	HandleEvent(intput string)
+	Print()
+}
+
+type initPrinter interface {
+	InitPrint(info *server.PlayAudioInfo)
 }
 
 type Window struct {
@@ -26,11 +27,12 @@ type Window struct {
 	al           *audioList
 	vc           *volumeController
 	si           *searchInput
-	mutex        sync.Mutex
 
-	items       *sll.List
-	it          sll.Iterator
-	currItem    item
+	tabItems []item
+	tabIndex int
+
+	initPrinters []initPrinter
+
 	levelOffset float64
 }
 
@@ -38,8 +40,6 @@ func NewWindow(rpcClient server.PlayServerClient) *Window {
 	w := &Window{
 		playerClient: rpcClient,
 		levelOffset:  0.00,
-
-		items: sll.New(),
 	}
 	return w
 }
@@ -49,65 +49,73 @@ func (w *Window) Init() {
 	maxX, maxY := termui.TerminalDimensions()
 	w.MaxX = float64(maxX)
 	w.MaxY = float64(maxY)
-	a := w.chceckPlayStatus()
-	if a == nil {
-		return
-	}
 
-	w.ps = newPlayStatus(w)
-	w.al = newAudioList(w)
-	w.vc = newVolumeController(w, a.GetVolume())
-	w.si = newSearchInput(w)
+	w.initMember()
+	w.startPrint()
 
-	w.items.Add(w.al)
-	w.items.Add(w.si)
+	// cronjob
+	go w.ps.Cronjob()
+	go w.al.Cronjob()
 
-	go w.ps.asyncPrint()
-	w.ps.flushForce <- a
-
-	w.al.trySelectInit(a.GetName())
-	go w.al.asyncPrint()
-
-	w.vc.print()
-	w.si.print()
-	w.al.print()
+	// tab term list
+	w.tabItems = append(w.tabItems, w.al)
+	w.tabItems = append(w.tabItems, w.si)
+	w.tabItems[0].Entry()
 
 	uiEvents := termui.PollEvents()
-
-	v, _ := w.items.Get(0)
-	w.currItem = v.(item)
-	w.currItem.entry()
-	w.it = w.items.Iterator()
-	w.it.Next()
-
 	for {
 		e := <-uiEvents
 		switch e.ID {
 		case "<Tab>":
 			w.nextItem()
+		case "<C-n>":
+			w.ps.ChangeLoopMode()
+		case "<C-j>":
+			w.vc.Down()
+		case "<C-k>":
+			w.vc.Up()
 		case "<C-c>", "<C-q>", "<Escape>":
 			return
 		default:
-			w.currItem.handleEvent(e.ID)
-			w.currItem.print()
+			w.tabItems[w.tabIndex].HandleEvent(e.ID)
+			w.tabItems[w.tabIndex].Print()
 		}
 	}
 }
 
-func (w *Window) nextItem() {
-	w.currItem.leave()
-	if !w.it.Next() {
-		w.it = w.items.Iterator()
-		w.it.Next()
-	}
-	w.currItem = w.it.Value().(item)
-	w.currItem.entry()
+func (w *Window) initMember() {
+	w.ps = newPlayStatus(w)
+	w.al = newAudioList(w)
+	w.vc = newVolumeController(w)
+	w.si = newSearchInput(w)
+
+	w.initPrinters = append(w.initPrinters, w.ps)
+	w.initPrinters = append(w.initPrinters, w.vc)
+	w.initPrinters = append(w.initPrinters, w.al)
+
 }
 
-func (w *Window) syncPrint(d termui.Drawable) {
-	w.mutex.Lock()
-	termui.Render(d)
-	w.mutex.Unlock()
+func (w *Window) startPrint() {
+	info := w.PlayStatus()
+	if info == nil {
+		return
+	}
+
+	for _, v := range w.initPrinters {
+		v.InitPrint(info)
+	}
+
+	w.si.Print()
+}
+
+func (w *Window) nextItem() {
+	w.tabItems[w.tabIndex].Leave()
+	if w.tabIndex == len(w.tabItems)-1 {
+		w.tabIndex = 0
+	} else {
+		w.tabIndex++
+	}
+	w.tabItems[w.tabIndex].Entry()
 }
 
 func (w *Window) Close() {

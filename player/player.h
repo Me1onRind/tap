@@ -40,7 +40,7 @@ void mr_player_destory(mr_player *p); // uninit
 void mr_player_reset(mr_player *p); // reset
 void mr_player_set_volume(mr_player *p, float volume); // set volume
 
-void mr_curr_audio_info(mr_player *p, uint32_t *second, uint32_t *curr, uint32_t *sampleRate);
+void mr_curr_audio_info(mr_player *p, uint32_t *second, uint32_t *curr);
 
 void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
 

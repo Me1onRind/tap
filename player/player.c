@@ -67,9 +67,9 @@ void mr_player_reset(mr_player *p) {
     ma_decoder_seek_to_pcm_frame(p->userdata.decoder, 0);
 }
 
-void mr_curr_audio_info(mr_player* p, uint32_t *second, uint32_t *curr, uint32_t *sampleRate) {
-    *sampleRate = p->userdata.decoder->outputSampleRate;
-    *second = p->userdata.total_frame / *sampleRate;
+void mr_curr_audio_info(mr_player* p, uint32_t *second, uint32_t *curr) {
+    uint32_t sampleRate = p->userdata.decoder->outputSampleRate;
+    *second = p->userdata.total_frame / sampleRate;
     *curr = *second * p->userdata.decoder->readPointer / p->userdata.total_frame;
 }
 

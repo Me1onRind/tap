@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
-	"path/filepath"
 	"tap/player"
 	"tap/server"
 	"time"
@@ -17,14 +16,14 @@ type playStatus struct {
 	progress  *widgets.Gauge
 	countDown *widgets.Paragraph
 
-	flushForce chan *server.PlayAudioInfo
+	infoChan chan *server.PlayAudioInfo
 
 	AudioName   string
 	Duration    uint32
 	CurrPro     uint32
-	SampleRate  uint32
 	Status      uint32
 	StatusLabel string
+	LoopMode    uint32
 }
 
 func newPlayStatus(w *Window) *playStatus {
@@ -33,7 +32,7 @@ func newPlayStatus(w *Window) *playStatus {
 		progress:    widgets.NewGauge(),
 		countDown:   widgets.NewParagraph(),
 		window:      w,
-		flushForce:  make(chan *server.PlayAudioInfo, 10),
+		infoChan:    make(chan *server.PlayAudioInfo, 10),
 		Status:      0,
 		StatusLabel: "Stop",
 	}
@@ -50,54 +49,57 @@ func newPlayStatus(w *Window) *playStatus {
 	return p
 }
 
-func (p *playStatus) printStatus() {
-	pg := p.self
-	pg.Text = p.text()
-	p.window.syncPrint(pg)
+func (p *playStatus) InitPrint(info *server.PlayAudioInfo) {
+	p.init(info)
+	p.print()
 }
 
-func (p *playStatus) printPro() {
-	p.window.syncPrint(p.countDown)
-	p.window.syncPrint(p.progress)
-}
-
-func (p *playStatus) asyncPrint() {
-	p.printPro()
-	p.printStatus()
+func (p *playStatus) Cronjob() {
 	ticker := time.NewTicker(time.Second)
 	for {
 		select {
 		case <-ticker.C:
 			if p.Status == player.PLAY && p.CurrPro < p.Duration {
 				p.CurrPro++
+			} else if p.CurrPro == p.Duration {
+				info := p.window.PlayStatus()
+				p.Notify(info)
 			}
 			p.updateProgress()
 			p.printPro()
-		case a := <-p.flushForce:
-			p.Status = a.GetStatus()
-			if a.GetPathinfo() != "" {
-				p.AudioName = filepath.Base(a.GetPathinfo())
-			}
-			p.Duration = a.GetDuration()
-			p.CurrPro = a.GetCurr()
-			p.SampleRate = a.GetSampleRate()
-
-			p.updateProgress()
+		case info := <-p.infoChan:
+			p.init(info)
 			ticker.Stop()
 			ticker = time.NewTicker(time.Second)
-			p.printPro()
-			p.printStatus()
+			p.print()
 		}
 	}
 }
 
-func (p *playStatus) updateProgress() {
-	if p.Duration == 0 {
-		p.progress.Percent = 0
-	} else {
-		p.progress.Percent = int(100 * p.CurrPro / p.Duration)
+func (p *playStatus) Notify(info *server.PlayAudioInfo) {
+	if info != nil {
+		p.infoChan <- info
 	}
-	p.countDown.Text = fmt.Sprintf(" %s/%s", formatDuration(p.CurrPro), formatDuration(p.Duration))
+}
+
+func (p *playStatus) init(info *server.PlayAudioInfo) {
+	p.Status = info.GetStatus()
+	p.LoopMode = info.GetMode()
+	p.AudioName = info.Name
+	p.Duration = info.Duration
+	p.CurrPro = info.Curr
+	p.updateProgress()
+}
+
+func (p *playStatus) print() {
+	p.printPro()
+	p.printStatus()
+}
+
+func (p *playStatus) printStatus() {
+	pg := p.self
+	pg.Text = p.text()
+
 	switch p.Status {
 	case player.PLAY:
 		p.StatusLabel = "Playing ▶️  "
@@ -109,6 +111,22 @@ func (p *playStatus) updateProgress() {
 		p.StatusLabel = "Stop ⏹  "
 		p.self.BorderStyle = termui.NewStyle(termui.ColorWhite)
 	}
+
+	termui.Render(pg)
+}
+
+func (p *playStatus) printPro() {
+	termui.Render(p.countDown)
+	termui.Render(p.progress)
+}
+
+func (p *playStatus) updateProgress() {
+	if p.Duration == 0 {
+		p.progress.Percent = 0
+	} else {
+		p.progress.Percent = int(100 * p.CurrPro / p.Duration)
+	}
+	p.countDown.Text = fmt.Sprintf(" %s/%s", formatDuration(p.CurrPro), formatDuration(p.Duration))
 }
 
 func (p *playStatus) text() string {
@@ -116,10 +134,39 @@ func (p *playStatus) text() string {
 		"\n%s\n"+
 			"\nAudio:      %s\n"+
 			"\nDuration:   %s\n"+
-			"\nSampleRate: %.1f kHz\n",
-		p.StatusLabel, p.AudioName, formatDuration(p.Duration), float64(p.SampleRate)/1000.0)
+			"\nCycelMode:  %s\n",
+		p.StatusLabel, p.AudioName, formatDuration(p.Duration), p.formatLoopMode())
+}
+
+func (p *playStatus) ChangeLoopMode() {
+	newModel := server.SEQ_MODE
+	switch p.LoopMode {
+	case server.SINGLE_MODE:
+		newModel = server.RANDOM_MODE
+	case server.RANDOM_MODE:
+		newModel = server.SEQ_MODE
+	case server.SEQ_MODE:
+		newModel = server.SINGLE_MODE
+	}
+	p.window.ChangeLoopModel(newModel)
+
+	info := p.window.PlayStatus()
+	p.Notify(info)
 }
 
 func formatDuration(t uint32) string {
 	return fmt.Sprintf("%02d:%02d", t/60, t%60)
+}
+
+func (p *playStatus) formatLoopMode() string {
+	switch p.LoopMode {
+	case server.SINGLE_MODE:
+		return "Single 🔂"
+	case server.RANDOM_MODE:
+		return "Random 🔀"
+	case server.SEQ_MODE:
+		return "Order 🔂"
+	default:
+		return "Unknow"
+	}
 }

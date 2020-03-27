@@ -17,18 +17,18 @@ const (
 	STOP
 )
 
-type FinishCallback func()
+type FinishCallback func(p *PlayerWorker)
 
 type PlayerWorker struct {
 	cPlayer  unsafe.Pointer
 	cDecoder unsafe.Pointer
 
-	currAudiopath string
-	playerStatus  uint32
+	CurrAudiopath string
+	PlayerStatus  uint32
 
 	volume float32
 
-	Callback FinishCallback
+	Callback []FinishCallback
 	mutex    sync.Mutex
 }
 
@@ -37,7 +37,6 @@ type AudioInfo struct {
 	Pathinfo   string
 	Duration   uint32
 	CurrSecond uint32
-	SampleRate uint32
 	Volume     float32
 }
 
@@ -45,28 +44,32 @@ type AudioInfo struct {
 func playFinishCallback(pw unsafe.Pointer) {
 	p := (*PlayerWorker)(unsafe.Pointer(pw))
 	p.mutex.Lock()
-	p.Callback()
-	p.playerStatus = PAUSE
+	p.PlayerStatus = PAUSE
 	go func() {
 		p.mrReset()
 		p.mutex.Unlock()
+		for _, f := range p.Callback {
+			f(p)
+		}
 	}()
-	log.Println("finish play end callback")
 }
 
 func NewPlayerWorker() *PlayerWorker {
 	p := &PlayerWorker{
-		currAudiopath: "",
-		playerStatus:  INIT,
+		CurrAudiopath: "",
+		PlayerStatus:  INIT,
 		cPlayer:       C.malloc(C.sizeof_mr_player),
 		cDecoder:      C.malloc(C.sizeof_ma_decoder),
+		Callback:      make([]FinishCallback, 0),
 
 		volume: 0.5,
 	}
 
-	p.Callback = func() {
-	}
 	return p
+}
+
+func (p *PlayerWorker) AddCallback(f FinishCallback) {
+	p.Callback = append(p.Callback, f)
 }
 
 func (p *PlayerWorker) Close() {
@@ -79,20 +82,20 @@ func (p *PlayerWorker) Close() {
 func (p *PlayerWorker) Play(audiopath string) error {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
-	log.Printf("will play %s, now status is %d\n", audiopath, p.playerStatus)
+	log.Printf("will play %s, now status is %d\n", audiopath, p.PlayerStatus)
 	var err error
-	switch p.playerStatus {
+	switch p.PlayerStatus {
 	case INIT:
 		err = p.mrInit(audiopath)
 	case PLAY:
-		if audiopath == p.currAudiopath {
+		if audiopath == p.CurrAudiopath {
 			err = errors.New(audiopath + " is playing now")
 		} else {
 			p.mrStop()
 			err = p.mrInit(audiopath)
 		}
 	case PAUSE:
-		if audiopath != p.currAudiopath {
+		if audiopath != p.CurrAudiopath {
 			p.mrStop()
 			err = p.mrInit(audiopath)
 		}
@@ -100,8 +103,8 @@ func (p *PlayerWorker) Play(audiopath string) error {
 		err = p.mrInit(audiopath)
 	}
 	if err == nil {
-		p.currAudiopath = audiopath
-		p.playerStatus = PLAY
+		p.CurrAudiopath = audiopath
+		p.PlayerStatus = PLAY
 		return p.mrStart()
 	}
 	return err
@@ -110,7 +113,7 @@ func (p *PlayerWorker) Play(audiopath string) error {
 func (p *PlayerWorker) Stop() {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
-	switch p.playerStatus {
+	switch p.PlayerStatus {
 	case INIT:
 		return
 	case PLAY:
@@ -120,21 +123,21 @@ func (p *PlayerWorker) Stop() {
 	case STOP:
 		p.mrStop()
 	}
-	p.playerStatus = STOP
+	p.PlayerStatus = STOP
 }
 
 func (p *PlayerWorker) Pause() {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
-	switch p.playerStatus {
+	switch p.PlayerStatus {
 	case INIT:
 		return
 	case PLAY:
 		p.mrPause()
-		p.playerStatus = PAUSE
+		p.PlayerStatus = PAUSE
 	case PAUSE:
 		p.mrPause()
-		p.playerStatus = PAUSE
+		p.PlayerStatus = PAUSE
 	case STOP:
 		return
 	}
@@ -144,16 +147,16 @@ func (p *PlayerWorker) CurrAudioInfo() (*AudioInfo, error) {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 	a := &AudioInfo{
-		Status: uint32(p.playerStatus),
+		Status: uint32(p.PlayerStatus),
 		Volume: p.volume,
 	}
-	if p.playerStatus == INIT || p.playerStatus == STOP {
+	if p.PlayerStatus == INIT || p.PlayerStatus == STOP {
 		return a, nil
 	}
-	if p.currAudiopath == "" {
-		return nil, errors.New("currAudiopath is empty, but status wrong")
+	if p.CurrAudiopath == "" {
+		return nil, errors.New("CurrAudiopath is empty, but status wrong")
 	}
-	a.Pathinfo = p.currAudiopath
+	a.Pathinfo = p.CurrAudiopath
 	p.mrCurrAudioinfo(a)
 	return a, nil
 }
@@ -166,7 +169,7 @@ func (p *PlayerWorker) SetVolume(volume float32) {
 		return
 	}
 	p.volume = volume
-	if p.playerStatus == PLAY || p.playerStatus == PAUSE {
+	if p.PlayerStatus == PLAY || p.PlayerStatus == PAUSE {
 		p.mrSetVolume()
 	}
 }
@@ -195,29 +198,28 @@ func (p *PlayerWorker) mrStart() error {
 		log.Println(err)
 		return errors.New(C.GoString(err))
 	}
-	log.Printf("start play: %s\n", p.currAudiopath)
+	log.Printf("start play: %s\n", p.CurrAudiopath)
 	return nil
 }
 
 func (p *PlayerWorker) mrStop() {
 	C.mr_player_destory((*C.mr_player)(p.cPlayer))
-	log.Printf("stop play: %s\n", p.currAudiopath)
+	log.Printf("stop play: %s\n", p.CurrAudiopath)
 }
 
 func (p *PlayerWorker) mrPause() {
 	C.mr_player_stop((*C.mr_player)(p.cPlayer))
-	log.Printf("pause play: %s\n", p.currAudiopath)
+	log.Printf("pause play: %s\n", p.CurrAudiopath)
 }
 
 func (p *PlayerWorker) mrReset() {
 	C.mr_player_reset((*C.mr_player)(p.cPlayer))
-	log.Printf("reset play: %s\n", p.currAudiopath)
+	log.Printf("reset play: %s\n", p.CurrAudiopath)
 }
 
 func (p *PlayerWorker) mrCurrAudioinfo(info *AudioInfo) {
 	C.mr_curr_audio_info((*C.mr_player)(p.cPlayer),
-		(*C.uint32_t)(&info.Duration), (*C.uint32_t)(&info.CurrSecond),
-		(*C.uint32_t)(&info.SampleRate))
+		(*C.uint32_t)(&info.Duration), (*C.uint32_t)(&info.CurrSecond))
 }
 
 func (p *PlayerWorker) mrSetVolume() {

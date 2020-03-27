@@ -2,7 +2,6 @@ package local
 
 import (
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -52,7 +51,6 @@ func (p *LocalProvider) ListAll() ([]backend.AudioItem, error) {
 }
 
 func (p *LocalProvider) Search(reg string) ([]backend.AudioItem, error) {
-	log.Println(reg)
 	var files []backend.AudioItem
 	var err error
 	files = p.files[p.currDir]

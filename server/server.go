@@ -27,13 +27,13 @@ func (server *PlayServer) PlayOrPause(ctx context.Context, request *PlayRequest)
 		return nil, err
 	} else {
 		return &PlayAudioInfo{
-			Status:     uint32(authinfo.Status),
-			SampleRate: authinfo.SampleRate,
-			Duration:   authinfo.Duration,
-			Curr:       authinfo.CurrSecond,
-			Pathinfo:   authinfo.Pathinfo,
-			Volume:     authinfo.Volume,
-			Name:       filepath.Base(authinfo.Pathinfo),
+			Status:   uint32(authinfo.Status),
+			Duration: authinfo.Duration,
+			Curr:     authinfo.CurrSecond,
+			Pathinfo: authinfo.Pathinfo,
+			Volume:   authinfo.Volume,
+			Mode:     mode,
+			Name:     pathToName(authinfo.Pathinfo),
 		}, nil
 	}
 }
@@ -43,13 +43,13 @@ func (server *PlayServer) Status(ctx context.Context, empty *Empty) (*PlayAudioI
 		return nil, err
 	} else {
 		return &PlayAudioInfo{
-			Status:     uint32(authinfo.Status),
-			SampleRate: authinfo.SampleRate,
-			Duration:   authinfo.Duration,
-			Curr:       authinfo.CurrSecond,
-			Pathinfo:   authinfo.Pathinfo,
-			Volume:     authinfo.Volume,
-			Name:       filepath.Base(authinfo.Pathinfo),
+			Status:   uint32(authinfo.Status),
+			Duration: authinfo.Duration,
+			Curr:     authinfo.CurrSecond,
+			Pathinfo: authinfo.Pathinfo,
+			Volume:   authinfo.Volume,
+			Mode:     mode,
+			Name:     pathToName(authinfo.Pathinfo),
 		}, nil
 	}
 }
@@ -61,6 +61,11 @@ func (server *PlayServer) SetVolume(ctx context.Context, volume *VolumeRequest) 
 
 func (server *PlayServer) Stop(ctx context.Context, empty *Empty) (*Empty, error) {
 	Stop()
+	return &Empty{}, nil
+}
+
+func (server *PlayServer) SetPlayMode(ctx context.Context, playMode *PlayMode) (*Empty, error) {
+	mode = playMode.Mode
 	return &Empty{}, nil
 }
 
@@ -98,6 +103,13 @@ func (server *PlayServer) Provider(ctx context.Context, empty *Empty) (*Provider
 		ProviderType: int32(providerType),
 		Name:         providerName,
 	}, nil
+}
+
+func pathToName(pathinfo string) string {
+	if pathinfo == "" {
+		return ""
+	}
+	return filepath.Base(pathinfo)
 }
 
 func RunServer() {

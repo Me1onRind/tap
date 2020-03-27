@@ -20,24 +20,24 @@ func newSearchInput(window *Window) *searchInput {
 	return s
 }
 
-func (s *searchInput) entry() {
+func (s *searchInput) Entry() {
 	s.self.BorderStyle.Fg = termui.ColorGreen
 	s.self.Force = true
-	s.window.syncPrint(s.self)
+	termui.Render(s.self)
 }
 
-func (s *searchInput) leave() {
+func (s *searchInput) Leave() {
 	s.self.BorderStyle.Fg = termui.ColorWhite
 	s.self.Force = false
-	s.window.syncPrint(s.self)
+	termui.Render(s.self)
 }
 
-func (s *searchInput) print() {
+func (s *searchInput) Print() {
 	s.window.setPersentRectWithFixedHeight(s.self, 0.46, 0.05, 0.4, 3)
-	s.window.syncPrint(s.self)
+	termui.Render(s.self)
 }
 
-func (s *searchInput) handleEvent(input string) {
+func (s *searchInput) HandleEvent(input string) {
 	switch input {
 	case "<Enter>":
 		s.window.nextItem()
@@ -51,6 +51,6 @@ func (s *searchInput) handleEvent(input string) {
 }
 
 func (s *searchInput) flushAl() {
-	rows := s.window.search(s.self.String())
-	s.window.al.rowsChan <- rows
+	rows := s.window.Search(s.self.String())
+	s.window.al.NotifyRowsChange(rows)
 }

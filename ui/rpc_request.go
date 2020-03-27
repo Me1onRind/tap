@@ -27,7 +27,7 @@ func (w *Window) SetLocalProvider(dirs []string) bool {
 	return true
 }
 
-func (w *Window) chceckPlayStatus() *server.PlayAudioInfo {
+func (w *Window) PlayStatus() *server.PlayAudioInfo {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
 	a, err := w.playerClient.Status(ctx, &server.Empty{})
@@ -49,7 +49,7 @@ func (w *Window) ServerIsHealthLive() bool {
 	return true
 }
 
-func (w *Window) playOrPause(name string) *server.PlayAudioInfo {
+func (w *Window) PlayOrPause(name string) *server.PlayAudioInfo {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
 	res, err := w.playerClient.PlayOrPause(ctx, &server.PlayRequest{
@@ -62,7 +62,7 @@ func (w *Window) playOrPause(name string) *server.PlayAudioInfo {
 	return res
 }
 
-func (w *Window) setVolume(volume float32) bool {
+func (w *Window) SetVolume(volume float32) bool {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
 	_, err := w.playerClient.SetVolume(ctx, &server.VolumeRequest{
@@ -75,7 +75,7 @@ func (w *Window) setVolume(volume float32) bool {
 	return true
 }
 
-func (w *Window) listAll() []string {
+func (w *Window) ListAll() []string {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
 	res, err := w.playerClient.ListAll(ctx, &server.Empty{})
@@ -85,14 +85,26 @@ func (w *Window) listAll() []string {
 	return res.GetNames()
 }
 
-func (w *Window) search(input string) []string {
+func (w *Window) Search(input string) []string {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
 	res, err := w.playerClient.Search(ctx, &server.SearchRequest{
 		Input: input,
 	})
 	if err != nil {
+		log.Println(err)
 		return []string{}
 	}
 	return res.GetNames()
+}
+
+func (w *Window) ChangeLoopModel(mode uint32) {
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
+	defer cancel()
+	_, err := w.playerClient.SetPlayMode(ctx, &server.PlayMode{
+		Mode: mode,
+	})
+	if err != nil {
+		log.Println(err)
+	}
 }

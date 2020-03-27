@@ -6,6 +6,7 @@ service PlayServer {
     rpc PlayOrPause(PlayRequest) returns (PlayAudioInfo) {}
     rpc Status(Empty) returns (PlayAudioInfo) {}
     rpc Stop(Empty) returns(Empty){}
+    rpc SetPlayMode(PlayMode) returns (Empty){}
 
     rpc Provider(Empty) returns(ProviderReply){}
     rpc SetLocalProvider(LocalProvider) returns(Empty){}
@@ -17,6 +18,9 @@ service PlayServer {
     rpc Search(SearchRequest) returns(QueryReplay){}
 
     rpc Ping(Empty) returns(Empty){}
+}
+
+message Empty{
 }
 
 message PlayRequest {
@@ -32,16 +36,13 @@ message SearchRequest {
 }
 
 message PlayAudioInfo {
-    uint32 status    = 1;
-    uint32 duration  = 2;
-    uint32 curr      = 3;
+    uint32 status   = 1;
+    uint32 duration = 2;
+    uint32 curr     = 3;
     float volume    = 4;
-    uint32 sampleRate = 5;
+    uint32 mode     = 5;
     string pathinfo = 6;
-    string name = 7;
-}
-
-message Empty{
+    string name     = 7;
 }
 
 message QueryReplay {
@@ -56,3 +57,8 @@ message ProviderReply {
 message LocalProvider {
     repeated string dirs = 1;
 }
+
+message PlayMode {
+    uint32 mode = 1;
+}
+

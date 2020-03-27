@@ -1,15 +1,20 @@
 package ui
 
 import (
+	"fmt"
 	"github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
+	"tap/server"
 )
 
 type audioList struct {
 	self   *widgets.List // play status
 	window *Window
 
-	rowsChan chan []string
+	flushChan chan *server.PlayAudioInfo
+	rowsChan  chan []string
+
+	playName string
 }
 
 func newAudioList(window *Window) *audioList {
@@ -17,7 +22,8 @@ func newAudioList(window *Window) *audioList {
 		self:   widgets.NewList(),
 		window: window,
 
-		rowsChan: make(chan []string, 10),
+		flushChan: make(chan *server.PlayAudioInfo, 10),
+		rowsChan:  make(chan []string, 10),
 	}
 
 	audioListWg := a.self
@@ -27,30 +33,52 @@ func newAudioList(window *Window) *audioList {
 	audioListWg.PaddingTop = 1
 	audioListWg.WrapText = false
 	a.window.setPersentRect(audioListWg, 0.46, 0.13, 0.4, 0.74)
-	audioListWg.Rows = a.window.listAll()
 
 	return a
 }
 
-func (a *audioList) entry() {
+func (a *audioList) Entry() {
 	a.self.BorderStyle.Fg = termui.ColorGreen
-	a.print()
+	a.Print()
 }
 
-func (a *audioList) leave() {
+func (a *audioList) Leave() {
 	a.self.BorderStyle.Fg = termui.ColorWhite
-	a.print()
+	a.Print()
 }
 
-func (a *audioList) print() {
-	audioListWg := a.self
-
-	audioListWg.Title = "Audio file list"
-
-	a.window.syncPrint(audioListWg)
+func (a *audioList) InitPrint(info *server.PlayAudioInfo) {
+	a.self.Rows = a.window.ListAll()
+	a.playName = info.Name
 }
 
-func (a *audioList) handleEvent(input string) {
+func (a *audioList) Print() {
+	a.self.Title = "Audio file list"
+	var k int
+	var v string
+	for k, v = range a.self.Rows {
+		if v == a.playName {
+			a.self.Rows[k] = fmt.Sprintf("[%s](fg:yellow)", v)
+			termui.Render(a.self)
+			a.self.Rows[k] = v
+			return
+		}
+	}
+	termui.Render(a.self)
+
+}
+
+func (a *audioList) Cronjob() {
+	for {
+		select {
+		case rows := <-a.rowsChan:
+			a.self.Rows = rows
+			a.Print()
+		}
+	}
+}
+
+func (a *audioList) HandleEvent(input string) {
 	audioListWg := a.self
 	switch input {
 	case "q", "<C-c>":
@@ -63,43 +91,21 @@ func (a *audioList) handleEvent(input string) {
 		audioListWg.ScrollHalfPageDown()
 	case "<C-u>":
 		audioListWg.ScrollHalfPageUp()
-	case "<C-f>":
-	case "<Tab>":
 	case "<Enter>":
 		a.playOrPause()
 	case "<Space>":
 		a.playOrPause()
-	case "<C-j>":
-		a.window.vc.down()
-	case "<C-k>":
-		a.window.vc.up()
-	default:
 	}
+}
+
+func (a *audioList) NotifyRowsChange(rows []string) {
+	a.rowsChan <- rows
 }
 
 func (a *audioList) playOrPause() {
-	res := a.window.playOrPause(a.self.Rows[a.self.SelectedRow])
-	if res != nil {
-		a.window.ps.flushForce <- res
+	if a.self.SelectedRow >= len(a.self.Rows) {
+		return
 	}
-}
-
-func (a *audioList) asyncPrint() {
-	for {
-		select {
-		case rows := <-a.rowsChan:
-			a.self.Rows = rows
-			a.print()
-		}
-	}
-}
-
-func (a *audioList) trySelectInit(name string) {
-	for k, v := range a.self.Rows {
-		if v == name {
-			a.self.SelectedRow = k
-			a.print()
-			return
-		}
-	}
+	info := a.window.PlayOrPause(a.self.Rows[a.self.SelectedRow])
+	a.window.ps.Notify(info)
 }
