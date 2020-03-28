@@ -486,39 +486,39 @@ func init() {
 func init() { proto.RegisterFile("play_service.proto", fileDescriptor_619856292df9b42b) }
 
 var fileDescriptor_619856292df9b42b = []byte{
-	// 499 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x54, 0xcb, 0x6e, 0xd3, 0x40,
+	// 509 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x54, 0xcb, 0x6e, 0xd3, 0x40,
 	0x14, 0xb5, 0x53, 0xc7, 0x49, 0x6f, 0xb0, 0x54, 0x0d, 0x0f, 0x59, 0x5d, 0x58, 0x30, 0x88, 0xc2,
-	0x2a, 0xa0, 0x56, 0x62, 0x01, 0xab, 0x22, 0x21, 0x84, 0x54, 0x44, 0xb0, 0x11, 0x5b, 0x64, 0xe2,
-	0x29, 0x1d, 0xc9, 0xf1, 0x98, 0xf1, 0x4c, 0x24, 0x7f, 0x03, 0x1b, 0xfe, 0x85, 0x9f, 0x60, 0xd9,
-	0x25, 0x4b, 0x94, 0xfc, 0x08, 0xba, 0xe3, 0x78, 0x62, 0x37, 0x8a, 0xba, 0x9b, 0x73, 0x7c, 0xee,
-	0xeb, 0xdc, 0x19, 0x03, 0x29, 0xf3, 0xb4, 0xfe, 0x5a, 0x31, 0xb9, 0xe4, 0x73, 0x36, 0x2d, 0xa5,
-	0x50, 0x82, 0xf8, 0x08, 0x99, 0xa4, 0x23, 0x18, 0xbe, 0x5d, 0x94, 0xaa, 0xa6, 0x8f, 0x60, 0x32,
-	0xcb, 0xd3, 0x3a, 0x66, 0x3f, 0x34, 0xab, 0x14, 0x21, 0xe0, 0x15, 0xe9, 0x82, 0x85, 0xee, 0x43,
-	0xf7, 0xd9, 0x61, 0x6c, 0xce, 0xf4, 0x29, 0x04, 0x5f, 0x44, 0xae, 0x17, 0xac, 0x15, 0x3d, 0x00,
-	0x7f, 0x69, 0x08, 0x23, 0x1b, 0xc4, 0x1b, 0x44, 0x9f, 0x40, 0x90, 0xb0, 0x54, 0xce, 0xaf, 0x5a,
-	0xe1, 0x3d, 0x18, 0xf2, 0xa2, 0xd4, 0x6a, 0x93, 0xae, 0x01, 0xf4, 0xb7, 0x0b, 0x01, 0xd6, 0x3c,
-	0xd7, 0x19, 0x17, 0xef, 0x8b, 0x4b, 0x81, 0x09, 0x2b, 0x95, 0x2a, 0x5d, 0x19, 0x61, 0x10, 0x6f,
-	0x10, 0x39, 0x86, 0x71, 0xa6, 0x65, 0xaa, 0xb8, 0x28, 0xc2, 0x81, 0xf9, 0x62, 0x31, 0x76, 0x3a,
-	0xd7, 0x52, 0x86, 0x07, 0x86, 0x37, 0xe7, 0x4e, 0x63, 0x5e, 0xb7, 0x31, 0xd4, 0x2e, 0x44, 0xc6,
-	0xc2, 0x61, 0xa3, 0xc5, 0x33, 0xe6, 0x2e, 0x53, 0x75, 0xc5, 0x8b, 0x4b, 0x11, 0xfa, 0xa6, 0x3d,
-	0x8b, 0xad, 0x0b, 0xa3, 0x8e, 0x0b, 0x8f, 0x61, 0xf2, 0x49, 0x33, 0x59, 0xc7, 0x0c, 0x6d, 0xc5,
-	0xd1, 0x90, 0xc6, 0x8e, 0x0f, 0x70, 0x34, 0x03, 0xe8, 0x3b, 0x08, 0x66, 0x52, 0x2c, 0x79, 0xc6,
-	0x24, 0xea, 0x6a, 0x42, 0xe1, 0x4e, 0xb9, 0x21, 0x3e, 0xd7, 0x65, 0x63, 0xd8, 0x30, 0xee, 0x71,
-	0xb6, 0xda, 0xa0, 0x57, 0x2d, 0xb8, 0x10, 0xf3, 0x34, 0x6f, 0xb3, 0xa1, 0x28, 0xe3, 0xb2, 0x2d,
-	0x67, 0xce, 0x34, 0x82, 0x31, 0xfa, 0xf8, 0x01, 0xc7, 0x69, 0x47, 0x74, 0xb7, 0x23, 0x9e, 0xfe,
-	0xf4, 0x00, 0x50, 0x90, 0x98, 0x9d, 0x93, 0xd7, 0xcd, 0xaa, 0x3f, 0xca, 0x59, 0xaa, 0x2b, 0x46,
-	0xee, 0x4e, 0x9b, 0xbb, 0x30, 0xed, 0xec, 0xff, 0xf8, 0x7e, 0x97, 0xb4, 0x0b, 0xa2, 0x0e, 0x79,
-	0x01, 0x7e, 0xd2, 0x2c, 0x25, 0x68, 0x25, 0xe6, 0x02, 0xed, 0x8f, 0x38, 0x01, 0x2f, 0x51, 0xa2,
-	0xbc, 0xa9, 0xef, 0x43, 0x93, 0x79, 0x92, 0x30, 0x65, 0x07, 0x39, 0xea, 0xe6, 0x43, 0x66, 0x37,
-	0xe2, 0x14, 0xc6, 0xd6, 0x97, 0xbd, 0xdd, 0x74, 0xd7, 0x40, 0x1d, 0xf2, 0x0a, 0x8e, 0x12, 0xa6,
-	0xfa, 0x9e, 0x5a, 0x71, 0x8f, 0xde, 0xad, 0x77, 0x06, 0x87, 0x09, 0x53, 0xcd, 0x1b, 0xd8, 0x06,
-	0xf5, 0xde, 0xc4, 0x6e, 0xd0, 0x73, 0x18, 0x5d, 0xf0, 0x4a, 0x9d, 0xe7, 0xf9, 0xcd, 0x1e, 0xad,
-	0xf1, 0x9d, 0xfb, 0x44, 0x1d, 0xf2, 0x12, 0xfc, 0xe6, 0xf5, 0x6c, 0x4b, 0xf4, 0x5e, 0xd3, 0xbe,
-	0xb8, 0x13, 0xf0, 0x66, 0xbc, 0xf8, 0x7e, 0x9b, 0xcf, 0x6f, 0xc2, 0x3f, 0xab, 0xc8, 0xbd, 0x5e,
-	0x45, 0xee, 0xbf, 0x55, 0xe4, 0xfe, 0x5a, 0x47, 0xce, 0xf5, 0x3a, 0x72, 0xfe, 0xae, 0x23, 0xe7,
-	0x9b, 0x6f, 0xfe, 0x0d, 0x67, 0xff, 0x03, 0x00, 0x00, 0xff, 0xff, 0xb8, 0x07, 0x4c, 0x91, 0x31,
-	0x04, 0x00, 0x00,
+	0x2a, 0x54, 0x2d, 0x62, 0x01, 0xab, 0x22, 0x21, 0x84, 0x54, 0x84, 0xb1, 0x11, 0x5b, 0x64, 0xe2,
+	0x29, 0xb1, 0xe4, 0x78, 0xcc, 0x78, 0x26, 0x92, 0xff, 0x82, 0x7f, 0x61, 0xc9, 0x0f, 0xb0, 0xec,
+	0x92, 0x25, 0x4a, 0x7e, 0x04, 0xdd, 0x71, 0x3c, 0xb1, 0x1b, 0x45, 0xb0, 0x9b, 0x73, 0x7c, 0xee,
+	0xeb, 0xdc, 0x19, 0x03, 0x29, 0xf3, 0xa4, 0xfe, 0x5c, 0x31, 0xb1, 0xcc, 0x66, 0x6c, 0x5a, 0x0a,
+	0x2e, 0x39, 0x71, 0x11, 0x32, 0x41, 0x47, 0x30, 0x7c, 0xbd, 0x28, 0x65, 0x4d, 0x1f, 0xc0, 0x24,
+	0xcc, 0x93, 0x3a, 0x62, 0xdf, 0x14, 0xab, 0x24, 0x21, 0xe0, 0x14, 0xc9, 0x82, 0xf9, 0xf6, 0x7d,
+	0xfb, 0xc9, 0x61, 0xa4, 0xcf, 0xf4, 0x31, 0x78, 0x9f, 0x78, 0xae, 0x16, 0xac, 0x15, 0xdd, 0x03,
+	0x77, 0xa9, 0x09, 0x2d, 0x1b, 0x44, 0x1b, 0x44, 0x1f, 0x81, 0x17, 0xb3, 0x44, 0xcc, 0xe6, 0xad,
+	0xf0, 0x0e, 0x0c, 0xb3, 0xa2, 0x54, 0x72, 0x93, 0xae, 0x01, 0xf4, 0x87, 0x0d, 0x1e, 0xd6, 0xbc,
+	0x50, 0x69, 0xc6, 0xdf, 0x16, 0x57, 0x1c, 0x13, 0x56, 0x32, 0x91, 0xaa, 0xd2, 0x42, 0x2f, 0xda,
+	0x20, 0x72, 0x0c, 0xe3, 0x54, 0x89, 0x44, 0x66, 0xbc, 0xf0, 0x07, 0xfa, 0x8b, 0xc1, 0xd8, 0xe9,
+	0x4c, 0x09, 0xe1, 0x1f, 0x68, 0x5e, 0x9f, 0x3b, 0x8d, 0x39, 0xdd, 0xc6, 0x50, 0xbb, 0xe0, 0x29,
+	0xf3, 0x87, 0x8d, 0x16, 0xcf, 0x98, 0xbb, 0x4c, 0xe4, 0x3c, 0x2b, 0xae, 0xb8, 0xef, 0xea, 0xf6,
+	0x0c, 0x36, 0x2e, 0x8c, 0x3a, 0x2e, 0x3c, 0x84, 0xc9, 0x07, 0xc5, 0x44, 0x1d, 0x31, 0xb4, 0x15,
+	0x47, 0x43, 0x1a, 0x3b, 0x3e, 0xc0, 0xd1, 0x34, 0xa0, 0x6f, 0xc0, 0x0b, 0x05, 0x5f, 0x66, 0x29,
+	0x13, 0xa8, 0xab, 0x09, 0x85, 0x5b, 0xe5, 0x86, 0xf8, 0x58, 0x97, 0x8d, 0x61, 0xc3, 0xa8, 0xc7,
+	0x99, 0x6a, 0x83, 0x5e, 0x35, 0xef, 0x92, 0xcf, 0x92, 0xbc, 0xcd, 0x86, 0xa2, 0x34, 0x13, 0x6d,
+	0x39, 0x7d, 0xa6, 0x01, 0x8c, 0xd1, 0xc7, 0x77, 0x38, 0x4e, 0x3b, 0xa2, 0xbd, 0x1d, 0xf1, 0xec,
+	0xa7, 0x03, 0x0e, 0x0a, 0xc8, 0xcb, 0x66, 0xc9, 0xef, 0x45, 0x98, 0xa8, 0x8a, 0x91, 0xdb, 0xd3,
+	0xe6, 0x16, 0x4c, 0x3b, 0x9b, 0x3f, 0xbe, 0xdb, 0x25, 0xcd, 0x6a, 0xa8, 0x45, 0x4e, 0xc1, 0x8d,
+	0x9b, 0x75, 0x78, 0xad, 0x44, 0x5f, 0x9d, 0xfd, 0x11, 0x27, 0xe0, 0xc4, 0x92, 0x97, 0x37, 0xf5,
+	0x7d, 0xa8, 0x33, 0x4f, 0x62, 0x26, 0xcd, 0x08, 0x47, 0xdd, 0x7c, 0xc8, 0xec, 0x46, 0x9c, 0xc1,
+	0xd8, 0x38, 0xb2, 0xb7, 0x9b, 0xee, 0x02, 0xa8, 0x45, 0x5e, 0xc0, 0x51, 0xcc, 0x64, 0xdf, 0x4d,
+	0x23, 0xee, 0xd1, 0xbb, 0xf5, 0xce, 0xe1, 0x30, 0x66, 0xb2, 0xb9, 0xfd, 0xdb, 0xa0, 0xde, 0x6b,
+	0xd8, 0x0d, 0x7a, 0x0a, 0xa3, 0xcb, 0xac, 0x92, 0x17, 0x79, 0x7e, 0xb3, 0x47, 0x63, 0x7c, 0xe7,
+	0x26, 0x51, 0x8b, 0x3c, 0x07, 0xb7, 0x79, 0x37, 0xdb, 0x12, 0xbd, 0x77, 0xb4, 0x2f, 0xee, 0x04,
+	0x9c, 0x30, 0x2b, 0xbe, 0xfe, 0xd3, 0xe7, 0x67, 0x30, 0x0e, 0x55, 0x35, 0xd7, 0x4f, 0xed, 0x3f,
+	0x77, 0x78, 0x6a, 0xbf, 0xf2, 0x7f, 0xad, 0x02, 0xfb, 0x7a, 0x15, 0xd8, 0x7f, 0x56, 0x81, 0xfd,
+	0x7d, 0x1d, 0x58, 0xd7, 0xeb, 0xc0, 0xfa, 0xbd, 0x0e, 0xac, 0x2f, 0xae, 0xfe, 0x97, 0x9c, 0xff,
+	0x0d, 0x00, 0x00, 0xff, 0xff, 0xe6, 0xed, 0x8e, 0x9f, 0x61, 0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -529,10 +529,10 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// PlayServerClient is the client API for PlayServer service.
+// PlayClient is the client API for Play service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type PlayServerClient interface {
+type PlayClient interface {
 	PlayOrPause(ctx context.Context, in *PlayRequest, opts ...grpc.CallOption) (*PlayAudioInfo, error)
 	Status(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PlayAudioInfo, error)
 	Stop(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
@@ -543,108 +543,141 @@ type PlayServerClient interface {
 	ListAll(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*QueryReplay, error)
 	Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*QueryReplay, error)
 	Ping(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
+	PushInfo(ctx context.Context, in *Empty, opts ...grpc.CallOption) (Play_PushInfoClient, error)
 }
 
-type playServerClient struct {
+type playClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewPlayServerClient(cc *grpc.ClientConn) PlayServerClient {
-	return &playServerClient{cc}
+func NewPlayClient(cc *grpc.ClientConn) PlayClient {
+	return &playClient{cc}
 }
 
-func (c *playServerClient) PlayOrPause(ctx context.Context, in *PlayRequest, opts ...grpc.CallOption) (*PlayAudioInfo, error) {
+func (c *playClient) PlayOrPause(ctx context.Context, in *PlayRequest, opts ...grpc.CallOption) (*PlayAudioInfo, error) {
 	out := new(PlayAudioInfo)
-	err := c.cc.Invoke(ctx, "/server.PlayServer/PlayOrPause", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/server.Play/PlayOrPause", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *playServerClient) Status(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PlayAudioInfo, error) {
+func (c *playClient) Status(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PlayAudioInfo, error) {
 	out := new(PlayAudioInfo)
-	err := c.cc.Invoke(ctx, "/server.PlayServer/Status", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/server.Play/Status", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *playServerClient) Stop(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
+func (c *playClient) Stop(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
-	err := c.cc.Invoke(ctx, "/server.PlayServer/Stop", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/server.Play/Stop", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *playServerClient) SetPlayMode(ctx context.Context, in *PlayMode, opts ...grpc.CallOption) (*Empty, error) {
+func (c *playClient) SetPlayMode(ctx context.Context, in *PlayMode, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
-	err := c.cc.Invoke(ctx, "/server.PlayServer/SetPlayMode", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/server.Play/SetPlayMode", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *playServerClient) Provider(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ProviderReply, error) {
+func (c *playClient) Provider(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ProviderReply, error) {
 	out := new(ProviderReply)
-	err := c.cc.Invoke(ctx, "/server.PlayServer/Provider", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/server.Play/Provider", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *playServerClient) SetLocalProvider(ctx context.Context, in *LocalProvider, opts ...grpc.CallOption) (*Empty, error) {
+func (c *playClient) SetLocalProvider(ctx context.Context, in *LocalProvider, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
-	err := c.cc.Invoke(ctx, "/server.PlayServer/SetLocalProvider", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/server.Play/SetLocalProvider", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *playServerClient) SetVolume(ctx context.Context, in *VolumeRequest, opts ...grpc.CallOption) (*Empty, error) {
+func (c *playClient) SetVolume(ctx context.Context, in *VolumeRequest, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
-	err := c.cc.Invoke(ctx, "/server.PlayServer/SetVolume", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/server.Play/SetVolume", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *playServerClient) ListAll(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*QueryReplay, error) {
+func (c *playClient) ListAll(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*QueryReplay, error) {
 	out := new(QueryReplay)
-	err := c.cc.Invoke(ctx, "/server.PlayServer/ListAll", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/server.Play/ListAll", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *playServerClient) Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*QueryReplay, error) {
+func (c *playClient) Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*QueryReplay, error) {
 	out := new(QueryReplay)
-	err := c.cc.Invoke(ctx, "/server.PlayServer/Search", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/server.Play/Search", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *playServerClient) Ping(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
+func (c *playClient) Ping(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
-	err := c.cc.Invoke(ctx, "/server.PlayServer/Ping", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/server.Play/Ping", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// PlayServerServer is the server API for PlayServer service.
-type PlayServerServer interface {
+func (c *playClient) PushInfo(ctx context.Context, in *Empty, opts ...grpc.CallOption) (Play_PushInfoClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Play_serviceDesc.Streams[0], "/server.Play/PushInfo", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &playPushInfoClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Play_PushInfoClient interface {
+	Recv() (*PlayAudioInfo, error)
+	grpc.ClientStream
+}
+
+type playPushInfoClient struct {
+	grpc.ClientStream
+}
+
+func (x *playPushInfoClient) Recv() (*PlayAudioInfo, error) {
+	m := new(PlayAudioInfo)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// PlayServer is the server API for Play service.
+type PlayServer interface {
 	PlayOrPause(context.Context, *PlayRequest) (*PlayAudioInfo, error)
 	Status(context.Context, *Empty) (*PlayAudioInfo, error)
 	Stop(context.Context, *Empty) (*Empty, error)
@@ -655,273 +688,304 @@ type PlayServerServer interface {
 	ListAll(context.Context, *Empty) (*QueryReplay, error)
 	Search(context.Context, *SearchRequest) (*QueryReplay, error)
 	Ping(context.Context, *Empty) (*Empty, error)
+	PushInfo(*Empty, Play_PushInfoServer) error
 }
 
-// UnimplementedPlayServerServer can be embedded to have forward compatible implementations.
-type UnimplementedPlayServerServer struct {
+// UnimplementedPlayServer can be embedded to have forward compatible implementations.
+type UnimplementedPlayServer struct {
 }
 
-func (*UnimplementedPlayServerServer) PlayOrPause(ctx context.Context, req *PlayRequest) (*PlayAudioInfo, error) {
+func (*UnimplementedPlayServer) PlayOrPause(ctx context.Context, req *PlayRequest) (*PlayAudioInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PlayOrPause not implemented")
 }
-func (*UnimplementedPlayServerServer) Status(ctx context.Context, req *Empty) (*PlayAudioInfo, error) {
+func (*UnimplementedPlayServer) Status(ctx context.Context, req *Empty) (*PlayAudioInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Status not implemented")
 }
-func (*UnimplementedPlayServerServer) Stop(ctx context.Context, req *Empty) (*Empty, error) {
+func (*UnimplementedPlayServer) Stop(ctx context.Context, req *Empty) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Stop not implemented")
 }
-func (*UnimplementedPlayServerServer) SetPlayMode(ctx context.Context, req *PlayMode) (*Empty, error) {
+func (*UnimplementedPlayServer) SetPlayMode(ctx context.Context, req *PlayMode) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetPlayMode not implemented")
 }
-func (*UnimplementedPlayServerServer) Provider(ctx context.Context, req *Empty) (*ProviderReply, error) {
+func (*UnimplementedPlayServer) Provider(ctx context.Context, req *Empty) (*ProviderReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Provider not implemented")
 }
-func (*UnimplementedPlayServerServer) SetLocalProvider(ctx context.Context, req *LocalProvider) (*Empty, error) {
+func (*UnimplementedPlayServer) SetLocalProvider(ctx context.Context, req *LocalProvider) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetLocalProvider not implemented")
 }
-func (*UnimplementedPlayServerServer) SetVolume(ctx context.Context, req *VolumeRequest) (*Empty, error) {
+func (*UnimplementedPlayServer) SetVolume(ctx context.Context, req *VolumeRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetVolume not implemented")
 }
-func (*UnimplementedPlayServerServer) ListAll(ctx context.Context, req *Empty) (*QueryReplay, error) {
+func (*UnimplementedPlayServer) ListAll(ctx context.Context, req *Empty) (*QueryReplay, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListAll not implemented")
 }
-func (*UnimplementedPlayServerServer) Search(ctx context.Context, req *SearchRequest) (*QueryReplay, error) {
+func (*UnimplementedPlayServer) Search(ctx context.Context, req *SearchRequest) (*QueryReplay, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Search not implemented")
 }
-func (*UnimplementedPlayServerServer) Ping(ctx context.Context, req *Empty) (*Empty, error) {
+func (*UnimplementedPlayServer) Ping(ctx context.Context, req *Empty) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
-
-func RegisterPlayServerServer(s *grpc.Server, srv PlayServerServer) {
-	s.RegisterService(&_PlayServer_serviceDesc, srv)
+func (*UnimplementedPlayServer) PushInfo(req *Empty, srv Play_PushInfoServer) error {
+	return status.Errorf(codes.Unimplemented, "method PushInfo not implemented")
 }
 
-func _PlayServer_PlayOrPause_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func RegisterPlayServer(s *grpc.Server, srv PlayServer) {
+	s.RegisterService(&_Play_serviceDesc, srv)
+}
+
+func _Play_PlayOrPause_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PlayRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PlayServerServer).PlayOrPause(ctx, in)
+		return srv.(PlayServer).PlayOrPause(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/server.PlayServer/PlayOrPause",
+		FullMethod: "/server.Play/PlayOrPause",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PlayServerServer).PlayOrPause(ctx, req.(*PlayRequest))
+		return srv.(PlayServer).PlayOrPause(ctx, req.(*PlayRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PlayServer_Status_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Play_Status_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PlayServerServer).Status(ctx, in)
+		return srv.(PlayServer).Status(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/server.PlayServer/Status",
+		FullMethod: "/server.Play/Status",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PlayServerServer).Status(ctx, req.(*Empty))
+		return srv.(PlayServer).Status(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PlayServer_Stop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Play_Stop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PlayServerServer).Stop(ctx, in)
+		return srv.(PlayServer).Stop(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/server.PlayServer/Stop",
+		FullMethod: "/server.Play/Stop",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PlayServerServer).Stop(ctx, req.(*Empty))
+		return srv.(PlayServer).Stop(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PlayServer_SetPlayMode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Play_SetPlayMode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PlayMode)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PlayServerServer).SetPlayMode(ctx, in)
+		return srv.(PlayServer).SetPlayMode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/server.PlayServer/SetPlayMode",
+		FullMethod: "/server.Play/SetPlayMode",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PlayServerServer).SetPlayMode(ctx, req.(*PlayMode))
+		return srv.(PlayServer).SetPlayMode(ctx, req.(*PlayMode))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PlayServer_Provider_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Play_Provider_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PlayServerServer).Provider(ctx, in)
+		return srv.(PlayServer).Provider(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/server.PlayServer/Provider",
+		FullMethod: "/server.Play/Provider",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PlayServerServer).Provider(ctx, req.(*Empty))
+		return srv.(PlayServer).Provider(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PlayServer_SetLocalProvider_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Play_SetLocalProvider_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LocalProvider)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PlayServerServer).SetLocalProvider(ctx, in)
+		return srv.(PlayServer).SetLocalProvider(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/server.PlayServer/SetLocalProvider",
+		FullMethod: "/server.Play/SetLocalProvider",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PlayServerServer).SetLocalProvider(ctx, req.(*LocalProvider))
+		return srv.(PlayServer).SetLocalProvider(ctx, req.(*LocalProvider))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PlayServer_SetVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Play_SetVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(VolumeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PlayServerServer).SetVolume(ctx, in)
+		return srv.(PlayServer).SetVolume(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/server.PlayServer/SetVolume",
+		FullMethod: "/server.Play/SetVolume",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PlayServerServer).SetVolume(ctx, req.(*VolumeRequest))
+		return srv.(PlayServer).SetVolume(ctx, req.(*VolumeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PlayServer_ListAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Play_ListAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PlayServerServer).ListAll(ctx, in)
+		return srv.(PlayServer).ListAll(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/server.PlayServer/ListAll",
+		FullMethod: "/server.Play/ListAll",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PlayServerServer).ListAll(ctx, req.(*Empty))
+		return srv.(PlayServer).ListAll(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PlayServer_Search_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Play_Search_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SearchRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PlayServerServer).Search(ctx, in)
+		return srv.(PlayServer).Search(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/server.PlayServer/Search",
+		FullMethod: "/server.Play/Search",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PlayServerServer).Search(ctx, req.(*SearchRequest))
+		return srv.(PlayServer).Search(ctx, req.(*SearchRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PlayServer_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Play_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PlayServerServer).Ping(ctx, in)
+		return srv.(PlayServer).Ping(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/server.PlayServer/Ping",
+		FullMethod: "/server.Play/Ping",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PlayServerServer).Ping(ctx, req.(*Empty))
+		return srv.(PlayServer).Ping(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _PlayServer_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "server.PlayServer",
-	HandlerType: (*PlayServerServer)(nil),
+func _Play_PushInfo_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(PlayServer).PushInfo(m, &playPushInfoServer{stream})
+}
+
+type Play_PushInfoServer interface {
+	Send(*PlayAudioInfo) error
+	grpc.ServerStream
+}
+
+type playPushInfoServer struct {
+	grpc.ServerStream
+}
+
+func (x *playPushInfoServer) Send(m *PlayAudioInfo) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+var _Play_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "server.Play",
+	HandlerType: (*PlayServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "PlayOrPause",
-			Handler:    _PlayServer_PlayOrPause_Handler,
+			Handler:    _Play_PlayOrPause_Handler,
 		},
 		{
 			MethodName: "Status",
-			Handler:    _PlayServer_Status_Handler,
+			Handler:    _Play_Status_Handler,
 		},
 		{
 			MethodName: "Stop",
-			Handler:    _PlayServer_Stop_Handler,
+			Handler:    _Play_Stop_Handler,
 		},
 		{
 			MethodName: "SetPlayMode",
-			Handler:    _PlayServer_SetPlayMode_Handler,
+			Handler:    _Play_SetPlayMode_Handler,
 		},
 		{
 			MethodName: "Provider",
-			Handler:    _PlayServer_Provider_Handler,
+			Handler:    _Play_Provider_Handler,
 		},
 		{
 			MethodName: "SetLocalProvider",
-			Handler:    _PlayServer_SetLocalProvider_Handler,
+			Handler:    _Play_SetLocalProvider_Handler,
 		},
 		{
 			MethodName: "SetVolume",
-			Handler:    _PlayServer_SetVolume_Handler,
+			Handler:    _Play_SetVolume_Handler,
 		},
 		{
 			MethodName: "ListAll",
-			Handler:    _PlayServer_ListAll_Handler,
+			Handler:    _Play_ListAll_Handler,
 		},
 		{
 			MethodName: "Search",
-			Handler:    _PlayServer_Search_Handler,
+			Handler:    _Play_Search_Handler,
 		},
 		{
 			MethodName: "Ping",
-			Handler:    _PlayServer_Ping_Handler,
+			Handler:    _Play_Ping_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "PushInfo",
+			Handler:       _Play_PushInfo_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "play_service.proto",
 }
 

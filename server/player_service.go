@@ -22,13 +22,19 @@ func PlayOrPause(name string) (*player.AudioInfo, error) {
 		worker.Pause()
 		currInfo.Status = player.PAUSE
 		currName = name
+		afterPlaySucc(currInfo)
 		return currInfo, nil
 	} else {
 		if err := worker.Play(audiopath); err != nil {
 			return nil, err
 		}
 		currName = name
-		return worker.CurrAudioInfo()
+		currInfo, err = worker.CurrAudioInfo()
+		if err != nil {
+			return nil, err
+		}
+		afterPlaySucc(currInfo)
+		return currInfo, nil
 	}
 }
 
@@ -48,4 +54,12 @@ func SetVolume(volume float32) {
 	mutex.Lock()
 	defer mutex.Unlock()
 	worker.SetVolume(volume)
+}
+
+func afterPlaySucc(info *player.AudioInfo) {
+	ps.push(info)
+
+	if mode == RANDOM_MODE && info.Status == player.PLAY {
+		sf.pathList = nil
+	}
 }

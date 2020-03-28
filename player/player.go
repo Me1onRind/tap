@@ -8,6 +8,7 @@ import "unsafe"
 import "errors"
 import "log"
 import "sync"
+import "time"
 
 const (
 	_ uint32 = iota
@@ -42,6 +43,7 @@ type AudioInfo struct {
 
 //export playFinishCallback
 func playFinishCallback(pw unsafe.Pointer) {
+	begin := time.Now()
 	p := (*PlayerWorker)(unsafe.Pointer(pw))
 	p.mutex.Lock()
 	p.PlayerStatus = PAUSE
@@ -51,6 +53,7 @@ func playFinishCallback(pw unsafe.Pointer) {
 		for _, f := range p.Callback {
 			f(p)
 		}
+		log.Printf("callback duration:%s\n", time.Since(begin))
 	}()
 }
 
@@ -82,7 +85,7 @@ func (p *PlayerWorker) Close() {
 func (p *PlayerWorker) Play(audiopath string) error {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
-	log.Printf("will play %s, now status is %d\n", audiopath, p.PlayerStatus)
+
 	var err error
 	switch p.PlayerStatus {
 	case INIT:
@@ -150,6 +153,7 @@ func (p *PlayerWorker) CurrAudioInfo() (*AudioInfo, error) {
 		Status: uint32(p.PlayerStatus),
 		Volume: p.volume,
 	}
+
 	if p.PlayerStatus == INIT || p.PlayerStatus == STOP {
 		return a, nil
 	}

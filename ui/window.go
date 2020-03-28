@@ -4,6 +4,7 @@ import (
 	"github.com/gizak/termui/v3"
 	//"log"
 	"math"
+	"sync"
 	"tap/server"
 )
 
@@ -22,7 +23,7 @@ type Window struct {
 	MaxX float64
 	MaxY float64
 
-	playerClient server.PlayServerClient
+	playerClient server.PlayClient
 	ps           *playStatus
 	al           *audioList
 	vc           *volumeController
@@ -34,9 +35,11 @@ type Window struct {
 	initPrinters []initPrinter
 
 	levelOffset float64
+
+	mutex sync.Mutex
 }
 
-func NewWindow(rpcClient server.PlayServerClient) *Window {
+func NewWindow(rpcClient server.PlayClient) *Window {
 	w := &Window{
 		playerClient: rpcClient,
 		levelOffset:  0.00,
@@ -62,6 +65,8 @@ func (w *Window) Init() {
 	w.tabItems = append(w.tabItems, w.si)
 	w.tabItems[0].Entry()
 
+	go w.subscribe()
+
 	uiEvents := termui.PollEvents()
 	for {
 		e := <-uiEvents
@@ -81,6 +86,12 @@ func (w *Window) Init() {
 			w.tabItems[w.tabIndex].Print()
 		}
 	}
+}
+
+func (w *Window) SyncPrint(print func()) {
+	w.mutex.Lock()
+	print()
+	w.mutex.Unlock()
 }
 
 func (w *Window) initMember() {

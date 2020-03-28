@@ -108,3 +108,18 @@ func (w *Window) ChangeLoopModel(mode uint32) {
 		log.Println(err)
 	}
 }
+
+func (w *Window) subscribe() {
+	res, _ := w.playerClient.PushInfo(context.Background(), &server.Empty{})
+	for {
+		info, err := res.Recv()
+		if err != nil {
+			log.Println(err)
+			res.CloseSend()
+			return
+		}
+
+		w.ps.Notify(info)
+		w.al.NotifyPlayNameChange(info.Name)
+	}
+}

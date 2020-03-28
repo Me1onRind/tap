@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package server;
 
-service PlayServer {
+service Play {
     rpc PlayOrPause(PlayRequest) returns (PlayAudioInfo) {}
     rpc Status(Empty) returns (PlayAudioInfo) {}
     rpc Stop(Empty) returns(Empty){}
@@ -18,6 +18,7 @@ service PlayServer {
     rpc Search(SearchRequest) returns(QueryReplay){}
 
     rpc Ping(Empty) returns(Empty){}
+    rpc PushInfo (Empty) returns (stream PlayAudioInfo){}
 }
 
 message Empty{
@@ -61,4 +62,5 @@ message LocalProvider {
 message PlayMode {
     uint32 mode = 1;
 }
+
 

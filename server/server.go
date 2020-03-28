@@ -9,67 +9,61 @@ import (
 	"os"
 	"path/filepath"
 	"tap/backend/local"
+	"tap/player"
 )
 
 const (
 	UNIX_SOCK_FILE = "/tmp/tap.sock"
 )
 
-type PlayServer struct {
+type Play struct {
+	pushChan chan *PlayAudioInfo
 }
 
-func (server *PlayServer) Ping(ctx context.Context, empty *Empty) (*Empty, error) {
+var (
+	ps *Play
+)
+
+func init() {
+	ps = &Play{}
+}
+
+func (server *Play) Ping(ctx context.Context, empty *Empty) (*Empty, error) {
 	return &Empty{}, nil
 }
 
-func (server *PlayServer) PlayOrPause(ctx context.Context, request *PlayRequest) (*PlayAudioInfo, error) {
-	if authinfo, err := PlayOrPause(request.Name); err != nil {
+func (server *Play) PlayOrPause(ctx context.Context, request *PlayRequest) (*PlayAudioInfo, error) {
+	if authInfo, err := PlayOrPause(request.Name); err != nil {
 		return nil, err
 	} else {
-		return &PlayAudioInfo{
-			Status:   uint32(authinfo.Status),
-			Duration: authinfo.Duration,
-			Curr:     authinfo.CurrSecond,
-			Pathinfo: authinfo.Pathinfo,
-			Volume:   authinfo.Volume,
-			Mode:     mode,
-			Name:     pathToName(authinfo.Pathinfo),
-		}, nil
+		return fommatPlayAudioInfo(authInfo), nil
 	}
 }
 
-func (server *PlayServer) Status(ctx context.Context, empty *Empty) (*PlayAudioInfo, error) {
-	if authinfo, err := Status(); err != nil {
+func (server *Play) Status(ctx context.Context, empty *Empty) (*PlayAudioInfo, error) {
+	if authInfo, err := Status(); err != nil {
 		return nil, err
 	} else {
-		return &PlayAudioInfo{
-			Status:   uint32(authinfo.Status),
-			Duration: authinfo.Duration,
-			Curr:     authinfo.CurrSecond,
-			Pathinfo: authinfo.Pathinfo,
-			Volume:   authinfo.Volume,
-			Mode:     mode,
-			Name:     pathToName(authinfo.Pathinfo),
-		}, nil
+		return fommatPlayAudioInfo(authInfo), nil
 	}
 }
 
-func (server *PlayServer) SetVolume(ctx context.Context, volume *VolumeRequest) (*Empty, error) {
+func (server *Play) SetVolume(ctx context.Context, volume *VolumeRequest) (*Empty, error) {
 	SetVolume(volume.Volume)
 	return &Empty{}, nil
 }
 
-func (server *PlayServer) Stop(ctx context.Context, empty *Empty) (*Empty, error) {
+func (server *Play) Stop(ctx context.Context, empty *Empty) (*Empty, error) {
 	Stop()
 	return &Empty{}, nil
 }
 
-func (server *PlayServer) SetPlayMode(ctx context.Context, playMode *PlayMode) (*Empty, error) {
+func (server *Play) SetPlayMode(ctx context.Context, playMode *PlayMode) (*Empty, error) {
 	mode = playMode.Mode
 	return &Empty{}, nil
 }
 
-func (server *PlayServer) ListAll(ctx context.Context, empty *Empty) (*QueryReplay, error) {
+func (server *Play) ListAll(ctx context.Context, empty *Empty) (*QueryReplay, error) {
 	all, err := ListAll()
 	if err != nil {
 		return nil, err
@@ -77,7 +71,7 @@ func (server *PlayServer) ListAll(ctx context.Context, empty *Empty) (*QueryRepl
 	return &QueryReplay{Names: all}, nil
 }
 
-func (server *PlayServer) Search(ctx context.Context, request *SearchRequest) (*QueryReplay, error) {
+func (server *Play) Search(ctx context.Context, request *SearchRequest) (*QueryReplay, error) {
 	if len(request.Input) == 0 {
 		return server.ListAll(ctx, nil)
 	}
@@ -89,7 +83,7 @@ func (server *PlayServer) Search(ctx context.Context, request *SearchRequest) (*
 	return &QueryReplay{Names: all}, nil
 }
 
-func (server *PlayServer) SetLocalProvider(ctx context.Context,
+func (server *Play) SetLocalProvider(ctx context.Context,
 	localPrivoder *LocalProvider) (*Empty, error) {
 	if len(localPrivoder.Dirs) == 0 {
 		return nil, errors.New("Dirs can't be length 0")
@@ -98,11 +92,45 @@ func (server *PlayServer) SetLocalProvider(ctx context.Context,
 	return &Empty{}, nil
 }
 
-func (server *PlayServer) Provider(ctx context.Context, empty *Empty) (*ProviderReply, error) {
+func (server *Play) Provider(ctx context.Context, empty *Empty) (*ProviderReply, error) {
 	return &ProviderReply{
 		ProviderType: int32(providerType),
 		Name:         providerName,
 	}, nil
+}
+func (server *Play) PushInfo(empty *Empty, res Play_PushInfoServer) error {
+	ch := make(chan *PlayAudioInfo, 2)
+	server.pushChan = ch
+	for {
+		select {
+		case info := <-ch:
+			res.Send(info)
+		case <-res.Context().Done():
+			log.Println("push done")
+			server.pushChan = nil
+			return nil
+		}
+	}
+}
+
+func (server *Play) push(info *player.AudioInfo) {
+	if server.pushChan != nil {
+		select {
+		case server.pushChan <- fommatPlayAudioInfo(info):
+		}
+	}
+}
+
+func fommatPlayAudioInfo(authInfo *player.AudioInfo) *PlayAudioInfo {
+	return &PlayAudioInfo{
+		Status:   uint32(authInfo.Status),
+		Duration: authInfo.Duration,
+		Curr:     authInfo.CurrSecond,
+		Pathinfo: authInfo.Pathinfo,
+		Volume:   authInfo.Volume,
+		Mode:     mode,
+		Name:     pathToName(authInfo.Pathinfo),
+	}
 }
 
 func pathToName(pathinfo string) string {
@@ -121,7 +149,7 @@ func RunServer() {
 		panic(err)
 	}
 	s := grpc.NewServer()
-	RegisterPlayServerServer(s, &PlayServer{})
+	RegisterPlayServer(s, ps)
 	defer func() {
 		if err := recover(); err != nil {
 			log.Println(err)

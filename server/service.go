@@ -48,7 +48,10 @@ func init() {
 		} else if mode == SEQ_MODE {
 			next = seqNext(p.CurrAudiopath)
 		}
-		PlayOrPause(next)
+		info, _ := PlayOrPause(next)
+		if p != nil {
+			ps.push(info)
+		}
 	})
 
 	mode = RANDOM_MODE

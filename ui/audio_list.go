@@ -11,8 +11,8 @@ type audioList struct {
 	self   *widgets.List // play status
 	window *Window
 
-	flushChan chan *server.PlayAudioInfo
-	rowsChan  chan []string
+	rowsChan     chan []string
+	playNameChan chan string
 
 	playName string
 }
@@ -22,8 +22,8 @@ func newAudioList(window *Window) *audioList {
 		self:   widgets.NewList(),
 		window: window,
 
-		flushChan: make(chan *server.PlayAudioInfo, 10),
-		rowsChan:  make(chan []string, 10),
+		rowsChan:     make(chan []string, 2),
+		playNameChan: make(chan string, 2),
 	}
 
 	audioListWg := a.self
@@ -77,8 +77,10 @@ func (a *audioList) Cronjob() {
 		select {
 		case rows := <-a.rowsChan:
 			a.self.Rows = rows
-			a.Print()
+		case playName := <-a.playNameChan:
+			a.playName = playName
 		}
+		a.window.SyncPrint(a.Print)
 	}
 }
 
@@ -106,11 +108,12 @@ func (a *audioList) NotifyRowsChange(rows []string) {
 	a.rowsChan <- rows
 }
 
+func (a *audioList) NotifyPlayNameChange(name string) {
+	a.playNameChan <- name
+}
 func (a *audioList) playOrPause() {
 	if a.self.SelectedRow >= len(a.self.Rows) {
 		return
 	}
-	info := a.window.PlayOrPause(a.self.Rows[a.self.SelectedRow])
-	a.playName = info.Name
-	a.window.ps.Notify(info)
+	a.window.PlayOrPause(a.self.Rows[a.self.SelectedRow])
 }

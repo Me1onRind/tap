@@ -4,11 +4,13 @@ import (
 	"flag"
 	//"tap/backend/local"
 	//"fmt"
+	"context"
 	"google.golang.org/grpc"
 	"log"
 	"os"
 	"tap/server"
 	"tap/ui"
+	"time"
 )
 
 var (
@@ -26,13 +28,15 @@ func main() {
 	dir = flag.String("dir", "./", "")
 	flag.Parse()
 
-	conn, err := grpc.Dial("unix://"+server.UNIX_SOCK_FILE, grpc.WithInsecure())
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*100)
+	defer cancel()
+	conn, err := grpc.DialContext(ctx, "unix://"+server.UNIX_SOCK_FILE, grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}
 	defer conn.Close()
 
-	rpcClient := server.NewPlayServerClient(conn)
+	rpcClient := server.NewPlayClient(conn)
 	window := ui.NewWindow(rpcClient)
 
 	if !window.ServerIsHealthLive() {

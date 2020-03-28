@@ -1,7 +1,6 @@
 package ui
 
 import (
-	//"context"
 	"fmt"
 	"github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
@@ -19,11 +18,13 @@ type playStatus struct {
 	infoChan chan *server.PlayAudioInfo
 
 	AudioName   string
-	Duration    uint32
-	CurrPro     uint32
 	Status      uint32
 	StatusLabel string
 	LoopMode    uint32
+
+	Duration uint32
+	Endline  int64
+	CurrPro  uint32
 }
 
 func newPlayStatus(w *Window) *playStatus {
@@ -55,22 +56,23 @@ func (p *playStatus) InitPrint(info *server.PlayAudioInfo) {
 }
 
 func (p *playStatus) Cronjob() {
-	ticker := time.NewTicker(time.Second)
+	ticker := time.NewTicker(time.Millisecond * 100)
 	for {
 		select {
 		case <-ticker.C:
-			if p.Status == player.PLAY && p.CurrPro < p.Duration {
-				p.CurrPro++
-			} else if p.CurrPro == p.Duration {
-				info := p.window.PlayStatus()
-				p.Notify(info)
+			if p.Status == player.PLAY {
+				now := time.Now().Unix()
+				if now >= p.Endline {
+					p.CurrPro = p.Duration
+				} else {
+					p.CurrPro = p.Duration - uint32(p.Endline-now)
+				}
+
+				p.updateProgress()
+				p.printPro()
 			}
-			p.updateProgress()
-			p.printPro()
 		case info := <-p.infoChan:
 			p.init(info)
-			ticker.Stop()
-			ticker = time.NewTicker(time.Second)
 			p.print()
 		}
 	}
@@ -83,11 +85,12 @@ func (p *playStatus) Notify(info *server.PlayAudioInfo) {
 }
 
 func (p *playStatus) init(info *server.PlayAudioInfo) {
-	p.Status = info.GetStatus()
-	p.LoopMode = info.GetMode()
+	p.Status = info.Status
+	p.LoopMode = info.Mode
 	p.AudioName = info.Name
 	p.Duration = info.Duration
 	p.CurrPro = info.Curr
+	p.Endline = int64(info.Duration-info.Curr) + time.Now().Unix()
 	p.updateProgress()
 }
 
@@ -98,7 +101,6 @@ func (p *playStatus) print() {
 
 func (p *playStatus) printStatus() {
 	pg := p.self
-	pg.Text = p.text()
 
 	switch p.Status {
 	case player.PLAY:
@@ -112,6 +114,7 @@ func (p *playStatus) printStatus() {
 		p.self.BorderStyle = termui.NewStyle(termui.ColorWhite)
 	}
 
+	pg.Text = p.text()
 	termui.Render(pg)
 }
 
@@ -165,7 +168,7 @@ func (p *playStatus) formatLoopMode() string {
 	case server.RANDOM_MODE:
 		return "Random 🔀"
 	case server.SEQ_MODE:
-		return "Order 🔂"
+		return "Order  🔁"
 	default:
 		return "Unknow"
 	}
