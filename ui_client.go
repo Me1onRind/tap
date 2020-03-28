@@ -28,7 +28,7 @@ func main() {
 	dir = flag.String("dir", "./", "")
 	flag.Parse()
 
-	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*100)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*100)
 	defer cancel()
 	conn, err := grpc.DialContext(ctx, "unix://"+server.UNIX_SOCK_FILE, grpc.WithInsecure())
 	if err != nil {

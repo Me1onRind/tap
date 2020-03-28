@@ -8,6 +8,10 @@ import (
 	"tap/server"
 )
 
+const (
+	_CHANNEL_SIZE = 160
+)
+
 type item interface {
 	Entry()
 	Leave()
@@ -28,22 +32,24 @@ type Window struct {
 	al           *audioList
 	vc           *volumeController
 	si           *searchInput
-
-	tabItems []item
-	tabIndex int
+	hb           *helpBox
 
 	initPrinters []initPrinter
+	tabItems     []item
+	tabIndex     int
 
-	levelOffset float64
-
-	mutex sync.Mutex
+	rewindOrForwardChan chan struct{}
+	levelOffset         float64
+	mutex               sync.Mutex
 }
 
 func NewWindow(rpcClient server.PlayClient) *Window {
 	w := &Window{
-		playerClient: rpcClient,
-		levelOffset:  0.00,
+		playerClient:        rpcClient,
+		levelOffset:         0.00,
+		rewindOrForwardChan: make(chan struct{}, 1),
 	}
+	w.rewindOrForwardChan <- struct{}{}
 	return w
 }
 
@@ -79,6 +85,10 @@ func (w *Window) Init() {
 			w.vc.Down()
 		case "<C-k>":
 			w.vc.Up()
+		case "<Left>":
+			w.rewind()
+		case "<Right>":
+			w.forward()
 		case "<C-c>", "<C-q>", "<Escape>":
 			return
 		default:
@@ -99,6 +109,7 @@ func (w *Window) initMember() {
 	w.al = newAudioList(w)
 	w.vc = newVolumeController(w)
 	w.si = newSearchInput(w)
+	w.hb = newHelpBox(w)
 
 	w.initPrinters = append(w.initPrinters, w.ps)
 	w.initPrinters = append(w.initPrinters, w.vc)
@@ -117,6 +128,7 @@ func (w *Window) startPrint() {
 	}
 
 	w.si.Print()
+	w.hb.Print()
 }
 
 func (w *Window) nextItem() {

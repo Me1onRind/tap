@@ -12,6 +12,8 @@ service Play {
     rpc SetLocalProvider(LocalProvider) returns(Empty){}
 
     rpc SetVolume(VolumeRequest) returns(Empty){}
+    rpc Forward(Second) returns(Empty){}
+    rpc Rewind(Second) returns(Empty){}
 
 
     rpc ListAll(Empty) returns(QueryReplay){}
@@ -63,4 +65,7 @@ message PlayMode {
     uint32 mode = 1;
 }
 
+message Second {
+    uint32 value = 1;
+}
 

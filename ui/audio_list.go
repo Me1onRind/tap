@@ -22,8 +22,8 @@ func newAudioList(window *Window) *audioList {
 		self:   widgets.NewList(),
 		window: window,
 
-		rowsChan:     make(chan []string, 2),
-		playNameChan: make(chan string, 2),
+		rowsChan:     make(chan []string, _CHANNEL_SIZE),
+		playNameChan: make(chan string, _CHANNEL_SIZE),
 	}
 
 	audioListWg := a.self

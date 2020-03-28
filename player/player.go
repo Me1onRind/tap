@@ -178,6 +178,20 @@ func (p *PlayerWorker) SetVolume(volume float32) {
 	}
 }
 
+func (p *PlayerWorker) Forward(second uint32) (*AudioInfo, error) {
+	if p.PlayerStatus == PLAY {
+		p.mrSeekFrame(int32(second))
+	}
+	return p.CurrAudioInfo()
+}
+
+func (p *PlayerWorker) Rewind(second uint32) (*AudioInfo, error) {
+	if p.PlayerStatus == PLAY {
+		p.mrSeekFrame(-int32(second))
+	}
+	return p.CurrAudioInfo()
+}
+
 func (p *PlayerWorker) mrInit(audiopath string) error {
 	// init decoder
 	err := C.mr_decoder_init_file((*C.ma_decoder)(p.cDecoder), C.CString(audiopath))
@@ -228,4 +242,8 @@ func (p *PlayerWorker) mrCurrAudioinfo(info *AudioInfo) {
 
 func (p *PlayerWorker) mrSetVolume() {
 	C.mr_player_set_volume((*C.mr_player)(p.cPlayer), (C.float)(p.volume))
+}
+
+func (p *PlayerWorker) mrSeekFrame(second int32) {
+	C.mr_player_seek_frame((*C.mr_player)(p.cPlayer), (C.int32_t)(second))
 }

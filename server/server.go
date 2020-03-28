@@ -53,6 +53,16 @@ func (server *Play) SetVolume(ctx context.Context, volume *VolumeRequest) (*Empt
 	return &Empty{}, nil
 }
 
+func (server *Play) Forward(ctx context.Context, second *Second) (*Empty, error) {
+	Forward(second.Value)
+	return &Empty{}, nil
+}
+
+func (server *Play) Rewind(ctx context.Context, second *Second) (*Empty, error) {
+	Rewind(second.Value)
+	return &Empty{}, nil
+}
+
 func (server *Play) Stop(ctx context.Context, empty *Empty) (*Empty, error) {
 	Stop()
 	return &Empty{}, nil
@@ -99,7 +109,7 @@ func (server *Play) Provider(ctx context.Context, empty *Empty) (*ProviderReply,
 	}, nil
 }
 func (server *Play) PushInfo(empty *Empty, res Play_PushInfoServer) error {
-	ch := make(chan *PlayAudioInfo, 2)
+	ch := make(chan *PlayAudioInfo, 100)
 	server.pushChan = ch
 	for {
 		select {

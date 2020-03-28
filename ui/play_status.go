@@ -33,7 +33,7 @@ func newPlayStatus(w *Window) *playStatus {
 		progress:    widgets.NewGauge(),
 		countDown:   widgets.NewParagraph(),
 		window:      w,
-		infoChan:    make(chan *server.PlayAudioInfo, 10),
+		infoChan:    make(chan *server.PlayAudioInfo, _CHANNEL_SIZE),
 		Status:      0,
 		StatusLabel: "Stop",
 	}
@@ -74,6 +74,16 @@ func (p *playStatus) Cronjob() {
 		case info := <-p.infoChan:
 			p.init(info)
 			p.print()
+			for {
+				select {
+				case info := <-p.infoChan:
+					p.init(info)
+					p.print()
+				default:
+					goto END
+				}
+			}
+		END:
 		}
 	}
 }

@@ -123,3 +123,29 @@ func (w *Window) subscribe() {
 		w.al.NotifyPlayNameChange(info.Name)
 	}
 }
+
+func (w *Window) forward() {
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
+	defer cancel()
+	<-w.rewindOrForwardChan
+	_, err := w.playerClient.Forward(ctx, &server.Second{
+		Value: 2,
+	})
+	if err != nil {
+		log.Println(err)
+	}
+	w.rewindOrForwardChan <- struct{}{}
+}
+
+func (w *Window) rewind() {
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
+	defer cancel()
+	<-w.rewindOrForwardChan
+	_, err := w.playerClient.Rewind(ctx, &server.Second{
+		Value: 2,
+	})
+	if err != nil {
+		log.Println(err)
+	}
+	w.rewindOrForwardChan <- struct{}{}
+}
