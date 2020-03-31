@@ -56,14 +56,10 @@ func SetVolume(volume float32) {
 	worker.SetVolume(volume)
 }
 
-func Forward(second uint32) {
-	info, _ := worker.Forward(second)
-	ps.push(info)
-}
-
-func Rewind(second uint32) {
-	info, _ := worker.Rewind(second)
-	ps.push(info)
+func Seek(second int64) {
+	mutex.Lock()
+	defer mutex.Unlock()
+	worker.Seek(second)
 }
 
 func afterPlaySucc(info *player.AudioInfo) {

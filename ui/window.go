@@ -38,18 +38,15 @@ type Window struct {
 	tabItems     []item
 	tabIndex     int
 
-	rewindOrForwardChan chan struct{}
-	levelOffset         float64
-	mutex               sync.Mutex
+	levelOffset float64
+	mutex       sync.Mutex
 }
 
 func NewWindow(rpcClient server.PlayClient) *Window {
 	w := &Window{
-		playerClient:        rpcClient,
-		levelOffset:         0.00,
-		rewindOrForwardChan: make(chan struct{}, 1),
+		playerClient: rpcClient,
+		levelOffset:  0.00,
 	}
-	w.rewindOrForwardChan <- struct{}{}
 	return w
 }
 
@@ -79,6 +76,8 @@ func (w *Window) Init() {
 		switch e.ID {
 		case "<Tab>":
 			w.nextItem()
+		case "<C-f>":
+			w.choseItem(w.si)
 		case "<C-n>":
 			w.ps.ChangeLoopMode()
 		case "<C-j>":
@@ -86,9 +85,9 @@ func (w *Window) Init() {
 		case "<C-k>":
 			w.vc.Up()
 		case "<Left>":
-			w.rewind()
+			w.ps.SeekAudioFile(-2)
 		case "<Right>":
-			w.forward()
+			w.ps.SeekAudioFile(2)
 		case "<C-c>", "<C-q>", "<Escape>":
 			return
 		default:
@@ -141,6 +140,17 @@ func (w *Window) nextItem() {
 	w.tabItems[w.tabIndex].Entry()
 }
 
+func (w *Window) choseItem(it item) {
+	for k, v := range w.tabItems {
+		if v == it {
+			w.tabItems[w.tabIndex].Leave()
+			w.tabIndex = k
+			it.Entry()
+			return
+		}
+	}
+}
+
 func (w *Window) Close() {
 	termui.Close()
 }
@@ -150,6 +160,14 @@ func (w *Window) setPersentRect(block termui.Drawable, offsetX, offsetY, width, 
 	y0 := int(w.MaxY * offsetY)
 	x1 := x0 + int(math.Ceil(w.MaxX*width))
 	y1 := y0 + int(w.MaxY*height)
+	block.SetRect(x0, y0, x1, y1)
+}
+
+func (w *Window) setPersentRectWithFixed(block termui.Drawable, offsetX, offsetY float64, width, height int) {
+	x0 := int(math.Ceil(w.MaxX*offsetX + w.levelOffset*w.MaxX))
+	y0 := int(w.MaxY * offsetY)
+	x1 := x0 + width
+	y1 := y0 + height
 	block.SetRect(x0, y0, x1, y1)
 }
 

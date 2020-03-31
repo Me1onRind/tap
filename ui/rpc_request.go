@@ -109,6 +109,17 @@ func (w *Window) ChangeLoopModel(mode uint32) {
 	}
 }
 
+func (w *Window) SeekAudioFile(second int64) {
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
+	defer cancel()
+	_, err := w.playerClient.Seek(ctx, &server.Second{
+		Value: second,
+	})
+	if err != nil {
+		log.Printf("request seek, value:%d, err:%s\n", second, err.Error())
+	}
+}
+
 func (w *Window) subscribe() {
 	res, _ := w.playerClient.PushInfo(context.Background(), &server.Empty{})
 	for {
@@ -119,33 +130,9 @@ func (w *Window) subscribe() {
 			return
 		}
 
-		w.ps.Notify(info)
-		w.al.NotifyPlayNameChange(info.Name)
+		if info != nil {
+			w.ps.Notify(info)
+			w.al.NotifyPlayNameChange(info.Name)
+		}
 	}
-}
-
-func (w *Window) forward() {
-	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
-	defer cancel()
-	<-w.rewindOrForwardChan
-	_, err := w.playerClient.Forward(ctx, &server.Second{
-		Value: 2,
-	})
-	if err != nil {
-		log.Println(err)
-	}
-	w.rewindOrForwardChan <- struct{}{}
-}
-
-func (w *Window) rewind() {
-	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
-	defer cancel()
-	<-w.rewindOrForwardChan
-	_, err := w.playerClient.Rewind(ctx, &server.Second{
-		Value: 2,
-	})
-	if err != nil {
-		log.Println(err)
-	}
-	w.rewindOrForwardChan <- struct{}{}
 }

@@ -27,7 +27,7 @@ func newVolumeController(window *Window) *volumeController {
 	}
 	v.self.MaxVal = 1.0
 	v.self.BarWidth = int(v.window.MaxX * 0.06)
-	v.window.setPersentRect(v.self, 0.07, 0.61, 0.07, 0.27)
+	v.window.setPersentRect(v.self, 0.07, 0.60, 0.07, 0.27)
 	return v
 }
 

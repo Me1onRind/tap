@@ -53,13 +53,8 @@ func (server *Play) SetVolume(ctx context.Context, volume *VolumeRequest) (*Empt
 	return &Empty{}, nil
 }
 
-func (server *Play) Forward(ctx context.Context, second *Second) (*Empty, error) {
-	Forward(second.Value)
-	return &Empty{}, nil
-}
-
-func (server *Play) Rewind(ctx context.Context, second *Second) (*Empty, error) {
-	Rewind(second.Value)
+func (server *Play) Seek(ctx context.Context, second *Second) (*Empty, error) {
+	Seek(second.Value)
 	return &Empty{}, nil
 }
 
@@ -116,7 +111,6 @@ func (server *Play) PushInfo(empty *Empty, res Play_PushInfoServer) error {
 		case info := <-ch:
 			res.Send(info)
 		case <-res.Context().Done():
-			log.Println("push done")
 			server.pushChan = nil
 			return nil
 		}
@@ -155,7 +149,6 @@ func RunServer() {
 
 	l, err := net.Listen("unix", UNIX_SOCK_FILE)
 	if err != nil {
-		log.Println(err)
 		panic(err)
 	}
 	s := grpc.NewServer()

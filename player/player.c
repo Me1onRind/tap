@@ -75,7 +75,7 @@ void mr_player_reset(mr_player *p) {
     pthread_mutex_unlock(&(p->userdata.lock));
 }
 
-void mr_curr_audio_info(mr_player* p, uint32_t *second, uint32_t *curr) {
+void mr_curr_audio_info(mr_player *p, int64_t *second, int64_t *curr) {
     uint32_t sampleRate = p->userdata.decoder->outputSampleRate;
     *second = p->userdata.total_frame / sampleRate;
     pthread_mutex_lock(&(p->userdata.lock));
@@ -87,12 +87,11 @@ void mr_player_set_volume(mr_player *p, float volume) {
     ma_device_set_master_volume(&(p->device), volume);
 }
 
-void mr_player_seek_frame(mr_player *p, int32_t second) {
+void mr_player_seek_frame(mr_player *p, int64_t second) {
     pthread_mutex_lock(&(p->userdata.lock));
-    ma_device_stop(&(p->device));
-    int64_t curr = (int64_t)p->userdata.read_frame;
+    /*int64_t curr = (int64_t)p->userdata.read_frame;*/
     int64_t sampleRate = (int64_t)p->userdata.decoder->outputSampleRate;
-    int64_t position = curr + 440 * (sampleRate / 1000) * second;
+    int64_t position = sampleRate * (second + 1);
     if (position >=  p->userdata.total_frame) {
         position = p->userdata.total_frame;
     }
@@ -103,7 +102,6 @@ void mr_player_seek_frame(mr_player *p, int32_t second) {
         p->userdata.read_frame = position;
         p->userdata.just_change = 1;
     }
-    ma_device_start(&(p->device));
     pthread_mutex_unlock(&(p->userdata.lock));
 }
 

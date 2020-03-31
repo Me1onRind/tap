@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
+	//"log"
 	"tap/player"
 	"tap/server"
 	"time"
@@ -17,14 +18,16 @@ type playStatus struct {
 
 	infoChan chan *server.PlayAudioInfo
 
+	skr *seeker
+
 	AudioName   string
 	Status      uint32
 	StatusLabel string
 	LoopMode    uint32
 
-	Duration uint32
+	Duration int64
 	Endline  int64
-	CurrPro  uint32
+	CurrPro  int64
 }
 
 func newPlayStatus(w *Window) *playStatus {
@@ -34,6 +37,7 @@ func newPlayStatus(w *Window) *playStatus {
 		countDown:   widgets.NewParagraph(),
 		window:      w,
 		infoChan:    make(chan *server.PlayAudioInfo, _CHANNEL_SIZE),
+		skr:         NewSeek(w),
 		Status:      0,
 		StatusLabel: "Stop",
 	}
@@ -44,9 +48,9 @@ func newPlayStatus(w *Window) *playStatus {
 	p.progress.Label = " "
 	p.countDown.Text = " 00:00/00:00"
 
-	p.window.setPersentRect(p.self, 0.14, 0.61, 0.315, 0.27)
-	p.window.setPersentRect(p.progress, 0.07, 0.87, 0.685, 0.09)
-	p.window.setPersentRect(p.countDown, 0.758, 0.87, 0.10, 0.09)
+	p.window.setPersentRect(p.self, 0.14, 0.60, 0.315, 0.27)      // status
+	p.window.setPersentRect(p.progress, 0.07, 0.87, 0.685, 0.09)  // progress
+	p.window.setPersentRect(p.countDown, 0.758, 0.87, 0.10, 0.09) // count down
 	return p
 }
 
@@ -60,32 +64,42 @@ func (p *playStatus) Cronjob() {
 	for {
 		select {
 		case <-ticker.C:
+			if p.skr.Shielding {
+				break
+			}
 			if p.Status == player.PLAY {
 				now := time.Now().Unix()
 				if now >= p.Endline {
 					p.CurrPro = p.Duration
 				} else {
-					p.CurrPro = p.Duration - uint32(p.Endline-now)
+					p.CurrPro = p.Duration - (p.Endline - now)
 				}
 
 				p.updateProgress()
 				p.printPro()
 			}
 		case info := <-p.infoChan:
+			if p.skr.Shielding {
+				break
+			}
 			p.init(info)
 			p.print()
-			for {
-				select {
-				case info := <-p.infoChan:
-					p.init(info)
-					p.print()
-				default:
-					goto END
-				}
-			}
-		END:
 		}
 	}
+}
+
+func (p *playStatus) SeekAudioFile(second int64) {
+	if second >= p.Duration-p.CurrPro { // forward limit
+		second = p.Duration - p.CurrPro
+	} else if -second > p.CurrPro { // rewind limit
+		second = -p.CurrPro
+	}
+
+	p.CurrPro += second
+	p.Endline -= second
+	p.skr.Handle(p.CurrPro, p.AudioName, p.Status == player.PLAY)
+	p.updateProgress()
+	p.window.SyncPrint(p.printPro)
 }
 
 func (p *playStatus) Notify(info *server.PlayAudioInfo) {
@@ -167,7 +181,7 @@ func (p *playStatus) ChangeLoopMode() {
 	p.Notify(info)
 }
 
-func formatDuration(t uint32) string {
+func formatDuration(t int64) string {
 	return fmt.Sprintf("%02d:%02d", t/60, t%60)
 }
 

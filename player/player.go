@@ -36,8 +36,8 @@ type PlayerWorker struct {
 type AudioInfo struct {
 	Status     uint32
 	Pathinfo   string
-	Duration   uint32
-	CurrSecond uint32
+	Duration   int64
+	CurrSecond int64
 	Volume     float32
 }
 
@@ -178,18 +178,8 @@ func (p *PlayerWorker) SetVolume(volume float32) {
 	}
 }
 
-func (p *PlayerWorker) Forward(second uint32) (*AudioInfo, error) {
-	if p.PlayerStatus == PLAY {
-		p.mrSeekFrame(int32(second))
-	}
-	return p.CurrAudioInfo()
-}
-
-func (p *PlayerWorker) Rewind(second uint32) (*AudioInfo, error) {
-	if p.PlayerStatus == PLAY {
-		p.mrSeekFrame(-int32(second))
-	}
-	return p.CurrAudioInfo()
+func (p *PlayerWorker) Seek(second int64) {
+	p.mrSeekFrame(second)
 }
 
 func (p *PlayerWorker) mrInit(audiopath string) error {
@@ -213,8 +203,9 @@ func (p *PlayerWorker) mrInit(audiopath string) error {
 func (p *PlayerWorker) mrStart() error {
 	err := C.mr_player_start((*C.mr_player)(p.cPlayer))
 	if err != nil {
-		log.Println(err)
-		return errors.New(C.GoString(err))
+		e := C.GoString(err)
+		log.Println(e)
+		return errors.New(e)
 	}
 	log.Printf("start play: %s\n", p.CurrAudiopath)
 	return nil
@@ -237,13 +228,13 @@ func (p *PlayerWorker) mrReset() {
 
 func (p *PlayerWorker) mrCurrAudioinfo(info *AudioInfo) {
 	C.mr_curr_audio_info((*C.mr_player)(p.cPlayer),
-		(*C.uint32_t)(&info.Duration), (*C.uint32_t)(&info.CurrSecond))
+		(*C.int64_t)(&info.Duration), (*C.int64_t)(&info.CurrSecond))
 }
 
 func (p *PlayerWorker) mrSetVolume() {
 	C.mr_player_set_volume((*C.mr_player)(p.cPlayer), (C.float)(p.volume))
 }
 
-func (p *PlayerWorker) mrSeekFrame(second int32) {
-	C.mr_player_seek_frame((*C.mr_player)(p.cPlayer), (C.int32_t)(second))
+func (p *PlayerWorker) mrSeekFrame(second int64) {
+	C.mr_player_seek_frame((*C.mr_player)(p.cPlayer), (C.int64_t)(second))
 }

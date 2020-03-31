@@ -44,7 +44,7 @@ func newHelpBox(window *Window) *helpBox {
 			"<C-n>   Change Loop Mode\n" +
 			"<Left>  Rewind\n" +
 			"<Right> Forward\n"
-	h.window.setPersentRect(h.self, 0.07, 0.05, 0.2, 0.35)
+	h.window.setPersentRectWithFixed(h.self, 0.07, 0.05, 30, 10)
 	return h
 }
 

@@ -12,9 +12,7 @@ service Play {
     rpc SetLocalProvider(LocalProvider) returns(Empty){}
 
     rpc SetVolume(VolumeRequest) returns(Empty){}
-    rpc Forward(Second) returns(Empty){}
-    rpc Rewind(Second) returns(Empty){}
-
+    rpc Seek(Second) returns(Empty){}
 
     rpc ListAll(Empty) returns(QueryReplay){}
     rpc Search(SearchRequest) returns(QueryReplay){}
@@ -40,8 +38,8 @@ message SearchRequest {
 
 message PlayAudioInfo {
     uint32 status   = 1;
-    uint32 duration = 2;
-    uint32 curr     = 3;
+    int64 duration = 2;
+    int64 curr     = 3;
     float volume    = 4;
     uint32 mode     = 5;
     string pathinfo = 6;
@@ -66,6 +64,6 @@ message PlayMode {
 }
 
 message Second {
-    uint32 value = 1;
+    int64 value = 1;
 }
 
