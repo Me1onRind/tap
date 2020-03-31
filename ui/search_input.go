@@ -33,7 +33,8 @@ func (s *searchInput) Leave() {
 }
 
 func (s *searchInput) Print() {
-	s.window.setPersentRectWithFixedHeight(s.self, 0.46, 0.05, 0.4, 3)
+	//s.window.setPersentRectWithFixedHeight(s.self, 0.46, 0.05, 0.4, 3)
+	s.window.setPersentRect(s.self, 0.46, 0.05, 0.4, 0.09)
 	termui.Render(s.self)
 }
 

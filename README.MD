@@ -13,3 +13,12 @@ There's no need to install any dependencies
 ### To avoid panic: argument has Go pointer to Go pointer
 export GODEBUG=cgocheck=0
 
+
+
+## Todo
+
+- Redesign ui layout
+- Support mutil-diretory
+- Output
+- Widget keys show
+- Support Minio

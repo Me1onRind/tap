@@ -78,12 +78,14 @@ func (w *Window) Init() {
 			w.nextItem()
 		case "<C-f>":
 			w.choseItem(w.si)
-		case "<C-n>":
-			w.ps.ChangeLoopMode()
-		case "<C-j>":
-			w.vc.Down()
+		case "<C-a>":
+			w.choseItem(w.al)
 		case "<C-k>":
 			w.vc.Up()
+		case "<C-j>":
+			w.vc.Down()
+		case "<C-n>":
+			w.ps.ChangeLoopMode()
 		case "<Left>":
 			w.ps.SeekAudioFile(-2)
 		case "<Right>":
