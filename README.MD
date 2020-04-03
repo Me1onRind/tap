@@ -17,7 +17,6 @@ export GODEBUG=cgocheck=0
 
 ## Todo
 
-- Redesign ui layout
 - Support mutil-diretory
 - Output
 - Widget keys show

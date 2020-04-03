@@ -3,7 +3,7 @@ package ui
 import (
 	"github.com/gizak/termui/v3"
 	//"log"
-	"math"
+	//"math"
 	"sync"
 	"tap/server"
 )
@@ -24,15 +24,18 @@ type initPrinter interface {
 }
 
 type Window struct {
-	MaxX float64
-	MaxY float64
+	MaxX int
+	MaxY int
 
 	playerClient server.PlayClient
 	ps           *playStatus
 	al           *audioList
+	dl           *dirList
 	vc           *volumeController
 	si           *searchInput
 	hb           *helpBox
+	rhb          *rightHelpBox
+	op           *output
 
 	initPrinters []initPrinter
 	tabItems     []item
@@ -52,9 +55,7 @@ func NewWindow(rpcClient server.PlayClient) *Window {
 
 func (w *Window) Init() {
 	termui.Init()
-	maxX, maxY := termui.TerminalDimensions()
-	w.MaxX = float64(maxX)
-	w.MaxY = float64(maxY)
+	w.MaxX, w.MaxY = termui.TerminalDimensions()
 
 	w.initMember()
 	w.startPrint()
@@ -108,9 +109,12 @@ func (w *Window) SyncPrint(print func()) {
 func (w *Window) initMember() {
 	w.ps = newPlayStatus(w)
 	w.al = newAudioList(w)
+	w.dl = newDirList(w)
 	w.vc = newVolumeController(w)
 	w.si = newSearchInput(w)
 	w.hb = newHelpBox(w)
+	w.rhb = newRightHelpBox(w)
+	w.op = newOutput(w)
 
 	w.initPrinters = append(w.initPrinters, w.ps)
 	w.initPrinters = append(w.initPrinters, w.vc)
@@ -130,6 +134,9 @@ func (w *Window) startPrint() {
 
 	w.si.Print()
 	w.hb.Print()
+	w.rhb.Print()
+	w.op.Print()
+	w.dl.Print()
 }
 
 func (w *Window) nextItem() {
@@ -157,26 +164,6 @@ func (w *Window) Close() {
 	termui.Close()
 }
 
-func (w *Window) setPersentRect(block termui.Drawable, offsetX, offsetY, width, height float64) {
-	x0 := int(math.Ceil(w.MaxX*offsetX + w.levelOffset*w.MaxX))
-	y0 := int(w.MaxY * offsetY)
-	x1 := x0 + int(math.Ceil(w.MaxX*width))
-	y1 := y0 + int(w.MaxY*height)
-	block.SetRect(x0, y0, x1, y1)
-}
-
-func (w *Window) setPersentRectWithFixed(block termui.Drawable, offsetX, offsetY float64, width, height int) {
-	x0 := int(math.Ceil(w.MaxX*offsetX + w.levelOffset*w.MaxX))
-	y0 := int(w.MaxY * offsetY)
-	x1 := x0 + width
-	y1 := y0 + height
-	block.SetRect(x0, y0, x1, y1)
-}
-
-func (w *Window) setPersentRectWithFixedHeight(block termui.Drawable, offsetX, offsetY, width float64, height int) {
-	x0 := int(math.Ceil(w.MaxX*offsetX + w.levelOffset*w.MaxX))
-	y0 := int(w.MaxY * offsetY)
-	x1 := x0 + int(math.Ceil(w.MaxX*width))
-	y1 := y0 + height
-	block.SetRect(x0, y0, x1, y1)
+func (w *Window) GetMax() (float64, float64) {
+	return float64(w.MaxX), float64(w.MaxY)
 }

@@ -32,7 +32,11 @@ func newAudioList(window *Window) *audioList {
 	audioListWg.PaddingLeft = 2
 	audioListWg.PaddingTop = 1
 	audioListWg.WrapText = false
-	a.window.setPersentRect(audioListWg, 0.46, 0.13, 0.4, 0.74)
+	a.self.Title = "Audio file list"
+	maxX, _ := a.window.GetMax()
+	audioListWg.SetRect(int(maxX*(_VOLUME_WIDTH+_PLAY_STATUS_WIDTH)), _SEARCH_HEIGHT,
+		int(maxX*(_VOLUME_WIDTH+_PLAY_STATUS_WIDTH+_LIST_WIDTH)), a.window.MaxY-_COUNT_DOWN_HEIGHT)
+	//a.window.setPersentRect(audioListWg, 0.46, 0.13, 0.4, 0.74)
 
 	return a
 }
@@ -59,7 +63,6 @@ func (a *audioList) InitPrint(info *server.PlayAudioInfo) {
 }
 
 func (a *audioList) Print() {
-	a.self.Title = "Audio file list"
 	for k, v := range a.self.Rows {
 		if v == a.playName {
 			a.self.Rows[k] = fmt.Sprintf("[%s](fg:yellow)", v)

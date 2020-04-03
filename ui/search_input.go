@@ -17,6 +17,9 @@ func newSearchInput(window *Window) *searchInput {
 	}
 	s.self.Title = "Search"
 	s.self.PaddingLeft = 1
+	maxX, _ := s.window.GetMax()
+	s.self.SetRect(int(maxX*(_VOLUME_WIDTH+_PLAY_STATUS_WIDTH)), 0,
+		s.window.MaxX, _SEARCH_HEIGHT)
 	return s
 }
 
@@ -33,8 +36,6 @@ func (s *searchInput) Leave() {
 }
 
 func (s *searchInput) Print() {
-	//s.window.setPersentRectWithFixedHeight(s.self, 0.46, 0.05, 0.4, 3)
-	s.window.setPersentRect(s.self, 0.46, 0.05, 0.4, 0.09)
 	termui.Render(s.self)
 }
 

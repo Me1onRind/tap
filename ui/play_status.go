@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
-	//"log"
 	"tap/player"
 	"tap/server"
 	"time"
@@ -48,9 +47,12 @@ func newPlayStatus(w *Window) *playStatus {
 	p.progress.Label = " "
 	p.countDown.Text = " 00:00/00:00"
 
-	p.window.setPersentRect(p.self, 0.14, 0.60, 0.315, 0.27)      // status
-	p.window.setPersentRect(p.progress, 0.07, 0.87, 0.685, 0.09)  // progress
-	p.window.setPersentRect(p.countDown, 0.758, 0.87, 0.10, 0.09) // count down
+	//p.window.setPersentRect(p.self, 0.14, 0.60, 0.315, 0.27) // status
+	p.countDown.SetRect(w.MaxX-_COUNT_DOWN_WIDTH, w.MaxY-_COUNT_DOWN_HEIGHT, w.MaxX, w.MaxY)
+	maxX, maxY := p.window.GetMax()
+	p.progress.SetRect(0, w.MaxY-_COUNT_DOWN_HEIGHT, w.MaxX-_COUNT_DOWN_WIDTH, w.MaxY)
+	p.self.SetRect(int(_VOLUME_WIDTH*maxX), int(maxY-_COUNT_DOWN_HEIGHT-_PLAY_STATUS_HEIGHT),
+		int(maxX*(_PLAY_STATUS_WIDTH+_VOLUME_WIDTH)), int(maxY-_COUNT_DOWN_HEIGHT))
 	return p
 }
 

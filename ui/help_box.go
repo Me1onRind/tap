@@ -44,7 +44,10 @@ func newHelpBox(window *Window) *helpBox {
 			"<Left>  Rewind\n" +
 			"<Right> Forward\n" +
 			"<Esc>   Exit\n"
-	h.window.setPersentRect(h.self, 0.07, 0.05, 0.2, 0.3)
+
+	h.self.SetRect(0, h.window.MaxY-_COUNT_DOWN_HEIGHT-_PLAY_STATUS_HEIGHT-_HELP_BOX_HEIGHT,
+		_HELP_BOX_WIDTH, h.window.MaxY-_COUNT_DOWN_HEIGHT-_PLAY_STATUS_HEIGHT)
+	//h.window.setPersentRect(h.self, 0.07, 0.05, 0.2, 0.3)
 	return h
 }
 
