@@ -17,6 +17,7 @@ func newRightHelpBox(window *Window) *rightHelpBox {
 	}
 	r.self.Title = "Widget Keys"
 	r.self.PaddingLeft = 1
+	r.self.PaddingTop = 1
 	r.self.Text =
 		"<C-k>   Volume up\n" +
 			"<C-j>   Volume down\n" +
@@ -34,4 +35,9 @@ func newRightHelpBox(window *Window) *rightHelpBox {
 
 func (r *rightHelpBox) Print() {
 	termui.Render(r.self)
+}
+
+func (r *rightHelpBox) UpdateText(text string) {
+	r.self.Text = text
+	r.Print()
 }

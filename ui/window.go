@@ -17,10 +17,15 @@ type item interface {
 	Leave()
 	HandleEvent(intput string)
 	Print()
+	WidgetKeys() string
 }
 
 type initPrinter interface {
 	InitPrint(info *server.PlayAudioInfo)
+}
+
+type printer interface {
+	Print()
 }
 
 type Window struct {
@@ -38,6 +43,7 @@ type Window struct {
 	op           *output
 
 	initPrinters []initPrinter
+	printers     []printer
 	tabItems     []item
 	tabIndex     int
 
@@ -65,9 +71,10 @@ func (w *Window) Init() {
 	go w.al.Cronjob()
 
 	// tab term list
-	w.tabItems = append(w.tabItems, w.al)
 	w.tabItems = append(w.tabItems, w.si)
-	w.tabItems[0].Entry()
+	w.tabItems = append(w.tabItems, w.al)
+	w.tabItems = append(w.tabItems, w.dl)
+	w.ChoseItem(w.al)
 
 	go w.subscribe()
 
@@ -78,9 +85,9 @@ func (w *Window) Init() {
 		case "<Tab>":
 			w.nextItem()
 		case "<C-f>":
-			w.choseItem(w.si)
+			w.ChoseItem(w.si)
 		case "<C-a>":
-			w.choseItem(w.al)
+			w.ChoseItem(w.al)
 		case "<C-k>":
 			w.vc.Up()
 		case "<C-j>":
@@ -108,18 +115,24 @@ func (w *Window) SyncPrint(print func()) {
 
 func (w *Window) initMember() {
 	w.ps = newPlayStatus(w)
-	w.al = newAudioList(w)
-	w.dl = newDirList(w)
 	w.vc = newVolumeController(w)
-	w.si = newSearchInput(w)
-	w.hb = newHelpBox(w)
-	w.rhb = newRightHelpBox(w)
-	w.op = newOutput(w)
+	w.al = newAudioList(w)
 
 	w.initPrinters = append(w.initPrinters, w.ps)
 	w.initPrinters = append(w.initPrinters, w.vc)
 	w.initPrinters = append(w.initPrinters, w.al)
 
+	w.dl = newDirList(w)
+	w.si = newSearchInput(w)
+	w.hb = newHelpBox(w)
+	w.rhb = newRightHelpBox(w)
+	w.op = newOutput(w)
+
+	w.printers = append(w.printers, w.dl)
+	w.printers = append(w.printers, w.si)
+	w.printers = append(w.printers, w.hb)
+	w.printers = append(w.printers, w.rhb)
+	w.printers = append(w.printers, w.op)
 }
 
 func (w *Window) startPrint() {
@@ -132,11 +145,9 @@ func (w *Window) startPrint() {
 		v.InitPrint(info)
 	}
 
-	w.si.Print()
-	w.hb.Print()
-	w.rhb.Print()
-	w.op.Print()
-	w.dl.Print()
+	for _, v := range w.printers {
+		v.Print()
+	}
 }
 
 func (w *Window) nextItem() {
@@ -146,18 +157,25 @@ func (w *Window) nextItem() {
 	} else {
 		w.tabIndex++
 	}
-	w.tabItems[w.tabIndex].Entry()
+	w.entry()
 }
 
-func (w *Window) choseItem(it item) {
+func (w *Window) ChoseItem(it item) {
 	for k, v := range w.tabItems {
 		if v == it {
 			w.tabItems[w.tabIndex].Leave()
 			w.tabIndex = k
-			it.Entry()
+			w.entry()
 			return
 		}
 	}
+}
+
+func (w *Window) entry() {
+	it := w.tabItems[w.tabIndex]
+	w.rhb.UpdateText(it.WidgetKeys())
+	it.Entry()
+
 }
 
 func (w *Window) Close() {

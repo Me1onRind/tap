@@ -62,6 +62,33 @@ func (a *audioList) InitPrint(info *server.PlayAudioInfo) {
 	}
 }
 
+func (a *audioList) HandleEvent(input string) {
+	audioListWg := a.self
+	switch input {
+	case "j", "<Down>":
+		audioListWg.ScrollDown()
+	case "k", "<Up>":
+		audioListWg.ScrollUp()
+	case "<C-d>":
+		audioListWg.ScrollHalfPageDown()
+	case "<C-u>":
+		audioListWg.ScrollHalfPageUp()
+	case "<Enter>":
+		a.playOrPause()
+	case "<Space>":
+		a.playOrPause()
+	}
+}
+
+func (a *audioList) WidgetKeys() string {
+	return "j <Down> Select next\n" +
+		"k <Up>   Select prev\n" +
+		"<C-d>    Page Down\n" +
+		"<C-u>    Page Up\n" +
+		"<Enter>  Play or Pause\n" +
+		"<Space>  Play or Pause\n"
+}
+
 func (a *audioList) Print() {
 	for k, v := range a.self.Rows {
 		if v == a.playName {
@@ -84,26 +111,6 @@ func (a *audioList) Cronjob() {
 			a.playName = playName
 		}
 		a.window.SyncPrint(a.Print)
-	}
-}
-
-func (a *audioList) HandleEvent(input string) {
-	audioListWg := a.self
-	switch input {
-	case "q", "<C-c>":
-		return
-	case "j", "<Down>":
-		audioListWg.ScrollDown()
-	case "k", "<Up>":
-		audioListWg.ScrollUp()
-	case "<C-d>":
-		audioListWg.ScrollHalfPageDown()
-	case "<C-u>":
-		audioListWg.ScrollHalfPageUp()
-	case "<Enter>":
-		a.playOrPause()
-	case "<Space>":
-		a.playOrPause()
 	}
 }
 

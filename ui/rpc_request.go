@@ -3,7 +3,7 @@ package ui
 import (
 	//"github.com/gizak/termui/v3"
 	"context"
-	"log"
+	//"log"
 	"tap/server"
 	"time"
 )
@@ -21,7 +21,7 @@ func (w *Window) SetLocalProvider(dirs []string) bool {
 	defer cancel()
 	_, err := w.playerClient.SetLocalProvider(ctx, &request)
 	if err != nil {
-		log.Println(err)
+		w.op.Println(err)
 		return false
 	}
 	return true
@@ -32,7 +32,7 @@ func (w *Window) PlayStatus() *server.PlayAudioInfo {
 	defer cancel()
 	a, err := w.playerClient.Status(ctx, &server.Empty{})
 	if err != nil {
-		log.Println(err)
+		w.op.Println(err)
 		return nil
 	}
 	return a
@@ -43,7 +43,7 @@ func (w *Window) ServerIsHealthLive() bool {
 	defer cancel()
 	_, err := w.playerClient.Ping(ctx, &server.Empty{})
 	if err != nil {
-		log.Println(err)
+		w.op.Println(err)
 		return false
 	}
 	return true
@@ -56,7 +56,7 @@ func (w *Window) PlayOrPause(name string) *server.PlayAudioInfo {
 		Name: name,
 	})
 	if err != nil {
-		log.Println(err)
+		w.op.Println(err)
 		return nil
 	}
 	return res
@@ -69,7 +69,7 @@ func (w *Window) SetVolume(volume float32) bool {
 		Volume: volume,
 	})
 	if err != nil {
-		log.Println(err)
+		w.op.Println(err)
 		return false
 	}
 	return true
@@ -80,6 +80,7 @@ func (w *Window) ListAll() []string {
 	defer cancel()
 	res, err := w.playerClient.ListAll(ctx, &server.Empty{})
 	if err != nil {
+		w.op.Println(err)
 		return []string{}
 	}
 	return res.GetNames()
@@ -92,7 +93,7 @@ func (w *Window) Search(input string) []string {
 		Input: input,
 	})
 	if err != nil {
-		log.Println(err)
+		w.op.Println(err)
 		return []string{}
 	}
 	return res.GetNames()
@@ -105,7 +106,7 @@ func (w *Window) ChangeLoopModel(mode uint32) {
 		Mode: mode,
 	})
 	if err != nil {
-		log.Println(err)
+		w.op.Println(err)
 	}
 }
 
@@ -116,7 +117,7 @@ func (w *Window) SeekAudioFile(second int64) {
 		Value: second,
 	})
 	if err != nil {
-		log.Printf("request seek, value:%d, err:%s\n", second, err.Error())
+		w.op.Printf("request seek, value:%d, err:%s\n", second, err.Error())
 	}
 }
 
@@ -125,7 +126,7 @@ func (w *Window) subscribe() {
 	for {
 		info, err := res.Recv()
 		if err != nil {
-			log.Println(err)
+			w.op.Println(err)
 			res.CloseSend()
 			return
 		}

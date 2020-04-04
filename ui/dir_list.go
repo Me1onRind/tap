@@ -51,6 +51,13 @@ func (d *dirList) Print() {
 	termui.Render(d.self)
 }
 
+func (d *dirList) WidgetKeys() string {
+	return "j <Down> Select next\n" +
+		"k <Up>   Select prev\n" +
+		"<Entry>  Chose Dir\n" +
+		"<Space>  Chose Dir\n"
+}
+
 func (d *dirList) HandleEvent(input string) {
 	switch input {
 	}

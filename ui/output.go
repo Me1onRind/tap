@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	"github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
 )
@@ -28,4 +29,14 @@ func newOutput(window *Window) *output {
 
 func (o *output) Print() {
 	termui.Render(o.self)
+}
+
+func (o *output) Println(values ...interface{}) {
+	o.self.Text = fmt.Sprintln(values...)
+	o.Print()
+}
+
+func (o *output) Printf(format string, values ...interface{}) {
+	o.self.Text = fmt.Sprintf(format, values...)
+	o.Print()
 }

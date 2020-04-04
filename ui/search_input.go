@@ -39,10 +39,15 @@ func (s *searchInput) Print() {
 	termui.Render(s.self)
 }
 
+func (s *searchInput) WidgetKeys() string {
+	return "<C-l>   Clear input\n" +
+		"<Enter> Entry audio list\n"
+}
+
 func (s *searchInput) HandleEvent(input string) {
 	switch input {
 	case "<Enter>":
-		s.window.nextItem()
+		s.window.ChoseItem(s.window.al)
 	case "<C-l>":
 		s.self.Reset()
 		s.flushAl()
