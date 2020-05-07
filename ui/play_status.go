@@ -113,7 +113,7 @@ func (p *playStatus) Notify(info *server.PlayAudioInfo) {
 func (p *playStatus) init(info *server.PlayAudioInfo) {
 	p.Status = info.Status
 	p.LoopMode = info.Mode
-	p.AudioName = info.Name
+	p.AudioName = info.Pathinfo
 	p.Duration = info.Duration
 	p.CurrPro = info.Curr
 	p.Endline = int64(info.Duration-info.Curr) + time.Now().Unix()

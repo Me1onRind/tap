@@ -4,6 +4,7 @@ import (
 	//"github.com/gizak/termui/v3"
 	"context"
 	//"log"
+	//"tap/backend"
 	"tap/server"
 	"time"
 )
@@ -49,11 +50,11 @@ func (w *Window) ServerIsHealthLive() bool {
 	return true
 }
 
-func (w *Window) PlayOrPause(name string) *server.PlayAudioInfo {
+func (w *Window) PlayOrPause(audioPath string) *server.PlayAudioInfo {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
 	res, err := w.playerClient.PlayOrPause(ctx, &server.PlayRequest{
-		Name: name,
+		AudioPath: audioPath,
 	})
 	if err != nil {
 		w.op.Println(err)
@@ -121,6 +122,26 @@ func (w *Window) SeekAudioFile(second int64) {
 	}
 }
 
+func (w *Window) Provider() *server.ProviderReply {
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
+	defer cancel()
+	p, err := w.playerClient.Provider(ctx, &server.Empty{})
+	if err != nil {
+		w.op.Println(err)
+		return nil
+	}
+	return p
+}
+
+func (w *Window) SetDir(dir string) {
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
+	defer cancel()
+	_, err := w.playerClient.SetDir(ctx, &server.Dir{Value: dir})
+	if err != nil {
+		w.op.Println(err)
+	}
+}
+
 func (w *Window) subscribe() {
 	res, _ := w.playerClient.PushInfo(context.Background(), &server.Empty{})
 	for {
@@ -133,7 +154,7 @@ func (w *Window) subscribe() {
 
 		if info != nil {
 			w.ps.Notify(info)
-			w.al.NotifyPlayNameChange(info.Name)
+			w.al.NotifyAudioPathChange(info.Pathinfo)
 		}
 	}
 }

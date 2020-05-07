@@ -10,6 +10,7 @@ service Play {
 
     rpc Provider(Empty) returns(ProviderReply){}
     rpc SetLocalProvider(LocalProvider) returns(Empty){}
+    rpc SetDir(Dir) returns(Empty){}
 
     rpc SetVolume(VolumeRequest) returns(Empty){}
     rpc Seek(Second) returns(Empty){}
@@ -25,7 +26,7 @@ message Empty{
 }
 
 message PlayRequest {
-    string name = 1;
+    string audioPath = 1;
 }
 
 message VolumeRequest {
@@ -53,6 +54,8 @@ message QueryReplay {
 message ProviderReply {
     int32 providerType = 1;
     string name = 2;
+    string currDir = 3;
+    repeated string dirs = 4;
 }
 
 message LocalProvider {
@@ -65,5 +68,9 @@ message PlayMode {
 
 message Second {
     int64 value = 1;
+}
+
+message Dir {
+    string value = 1;
 }
 

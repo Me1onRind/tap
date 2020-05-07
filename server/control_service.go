@@ -18,11 +18,7 @@ func ListAll() ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	var ret []string
-	for _, v := range list {
-		ret = append(ret, v.Name())
-	}
-	return ret, nil
+	return list, nil
 }
 
 func Search(input string) ([]string, error) {
@@ -30,11 +26,7 @@ func Search(input string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	var ret []string
-	for _, v := range list {
-		ret = append(ret, v.Name())
-	}
-	return ret, nil
+	return list, nil
 }
 
 func SetPlayMoel(m uint32) {

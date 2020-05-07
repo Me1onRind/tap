@@ -19,5 +19,4 @@ export GODEBUG=cgocheck=0
 
 - Support mutil-diretory
 - Output
-- Widget keys show
 - Support Minio

@@ -1,10 +1,11 @@
 package server
 
 import (
+	"fmt"
 	"tap/player"
 )
 
-func PlayOrPause(name string) (*player.AudioInfo, error) {
+func PlayOrPause(audiopath string) (*player.AudioInfo, error) {
 	mutex.Lock()
 	defer mutex.Unlock()
 
@@ -13,27 +14,19 @@ func PlayOrPause(name string) (*player.AudioInfo, error) {
 		return nil, err
 	}
 
-	audiopath, err := provider.Filepath(name)
-	if err != nil {
-		return nil, err
-	}
-
 	if currInfo.Pathinfo == audiopath && currInfo.Status == player.PLAY {
 		worker.Pause()
 		currInfo.Status = player.PAUSE
-		currName = name
-		afterPlaySucc(currInfo)
 		return currInfo, nil
 	} else {
 		if err := worker.Play(audiopath); err != nil {
 			return nil, err
 		}
-		currName = name
+		fmt.Println(audiopath)
 		currInfo, err = worker.CurrAudioInfo()
 		if err != nil {
 			return nil, err
 		}
-		afterPlaySucc(currInfo)
 		return currInfo, nil
 	}
 }
@@ -60,12 +53,4 @@ func Seek(second int64) {
 	mutex.Lock()
 	defer mutex.Unlock()
 	worker.Seek(second)
-}
-
-func afterPlaySucc(info *player.AudioInfo) {
-	ps.push(info)
-
-	if mode == RANDOM_MODE && info.Status == player.PLAY {
-		sf.pathList = nil
-	}
 }

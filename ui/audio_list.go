@@ -4,17 +4,20 @@ import (
 	"fmt"
 	"github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
+	//"log"
+	"path/filepath"
 	"tap/server"
 )
 
 type audioList struct {
 	self   *widgets.List // play status
 	window *Window
+	rows   []string
 
-	rowsChan     chan []string
-	playNameChan chan string
+	rowsChan      chan []string
+	audioPathChan chan string
 
-	playName string
+	audioPath string
 }
 
 func newAudioList(window *Window) *audioList {
@@ -22,8 +25,8 @@ func newAudioList(window *Window) *audioList {
 		self:   widgets.NewList(),
 		window: window,
 
-		rowsChan:     make(chan []string, _CHANNEL_SIZE),
-		playNameChan: make(chan string, _CHANNEL_SIZE),
+		rowsChan:      make(chan []string, _CHANNEL_SIZE),
+		audioPathChan: make(chan string, _CHANNEL_SIZE),
 	}
 
 	audioListWg := a.self
@@ -52,14 +55,15 @@ func (a *audioList) Leave() {
 }
 
 func (a *audioList) InitPrint(info *server.PlayAudioInfo) {
-	a.self.Rows = a.window.ListAll()
-	a.playName = info.Name
+	a.rows = a.window.ListAll()
+	a.audioPath = info.Name
 	for k, v := range a.self.Rows {
-		if v == a.playName {
+		if v == a.audioPath {
 			a.self.SelectedRow = k
 			break
 		}
 	}
+	a.Print()
 }
 
 func (a *audioList) HandleEvent(input string) {
@@ -73,9 +77,7 @@ func (a *audioList) HandleEvent(input string) {
 		audioListWg.ScrollHalfPageDown()
 	case "<C-u>":
 		audioListWg.ScrollHalfPageUp()
-	case "<Enter>":
-		a.playOrPause()
-	case "<Space>":
+	case "<Enter>", "<Space>":
 		a.playOrPause()
 	}
 }
@@ -90,14 +92,15 @@ func (a *audioList) WidgetKeys() string {
 }
 
 func (a *audioList) Print() {
-	for k, v := range a.self.Rows {
-		if v == a.playName {
-			a.self.Rows[k] = fmt.Sprintf("[%s](fg:yellow)", v)
-			termui.Render(a.self)
-			a.self.Rows[k] = v
-			return
+	var rows []string
+	for _, v := range a.rows {
+		if v == a.audioPath {
+			rows = append(rows, fmt.Sprintf("[%s](fg:yellow)", filepath.Base(v)))
+		} else {
+			rows = append(rows, filepath.Base(v))
 		}
 	}
+	a.self.Rows = rows
 	termui.Render(a.self)
 
 }
@@ -107,8 +110,8 @@ func (a *audioList) Cronjob() {
 		select {
 		case rows := <-a.rowsChan:
 			a.self.Rows = rows
-		case playName := <-a.playNameChan:
-			a.playName = playName
+		case audioPath := <-a.audioPathChan:
+			a.audioPath = audioPath
 		}
 		a.window.SyncPrint(a.Print)
 	}
@@ -118,12 +121,12 @@ func (a *audioList) NotifyRowsChange(rows []string) {
 	a.rowsChan <- rows
 }
 
-func (a *audioList) NotifyPlayNameChange(name string) {
-	a.playNameChan <- name
+func (a *audioList) NotifyAudioPathChange(audioPath string) {
+	a.audioPathChan <- audioPath
 }
 func (a *audioList) playOrPause() {
 	if a.self.SelectedRow >= len(a.self.Rows) {
 		return
 	}
-	a.window.PlayOrPause(a.self.Rows[a.self.SelectedRow])
+	a.window.PlayOrPause(a.rows[a.self.SelectedRow])
 }

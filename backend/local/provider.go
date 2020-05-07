@@ -1,31 +1,34 @@
 package local
 
 import (
+	"errors"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 	"regexp"
-	"tap/backend"
 )
 
 type LocalProvider struct {
 	dirs  []string
-	files map[string][]backend.AudioItem
+	files map[string][]string
 
 	currDir string
 }
 
 func NewLocalProvider(dirs []string) *LocalProvider {
 	p := &LocalProvider{
-		dirs:    dirs,
-		files:   make(map[string][]backend.AudioItem),
-		currDir: dirs[0],
+		files: make(map[string][]string),
 	}
-
+	for _, v := range dirs {
+		if dir, err := filepath.Abs(v); err == nil {
+			p.dirs = append(p.dirs, dir)
+		}
+	}
+	currDir, _ := filepath.Abs(dirs[0])
+	p.currDir = currDir
 	return p
 }
 
-func (p *LocalProvider) ListAll() ([]backend.AudioItem, error) {
+func (p *LocalProvider) ListAll() ([]string, error) {
 	if items, ok := p.files[p.currDir]; ok {
 		return items, nil
 	}
@@ -35,7 +38,7 @@ func (p *LocalProvider) ListAll() ([]backend.AudioItem, error) {
 		return nil, err
 	}
 
-	var files []backend.AudioItem
+	var files []string
 	for _, fi := range rd {
 		if fi.IsDir() {
 			continue
@@ -44,14 +47,29 @@ func (p *LocalProvider) ListAll() ([]backend.AudioItem, error) {
 		if ext != ".mp3" && ext != ".wmv" {
 			continue
 		}
-		files = append(files, fi)
+		files = append(files, p.currDir+"/"+fi.Name())
 	}
 	p.files[p.currDir] = files
 	return files, nil
 }
 
-func (p *LocalProvider) Search(reg string) ([]backend.AudioItem, error) {
-	var files []backend.AudioItem
+func (p *LocalProvider) ListDirs() []string {
+	var ret []string
+	for _, v := range p.dirs {
+		dir, _ := filepath.Abs(v)
+		if len(dir) > 0 {
+			ret = append(ret, dir)
+		}
+	}
+	return ret
+}
+
+func (p *LocalProvider) CurrDir() string {
+	return p.currDir
+}
+
+func (p *LocalProvider) Search(reg string) ([]string, error) {
+	var files []string
 	var err error
 	files = p.files[p.currDir]
 	if files == nil {
@@ -65,19 +83,28 @@ func (p *LocalProvider) Search(reg string) ([]backend.AudioItem, error) {
 	if err != nil {
 		return nil, err
 	}
-	var ret []backend.AudioItem
+	var ret []string
 
 	for _, v := range files {
-		fi := v.(os.FileInfo)
-		if regex.MatchString(fi.Name()) {
+		if regex.MatchString(filepath.Base(v)) {
 			ret = append(ret, v)
 		}
 	}
 	return ret, nil
 }
 
-func (p *LocalProvider) Filepath(name string) (string, error) {
-	return filepath.Abs(p.currDir + "/" + name)
+func (p *LocalProvider) Filepath(name string) string {
+	return p.currDir + "/" + name
+}
+
+func (p *LocalProvider) SetDir(dir string) error {
+	for _, v := range p.dirs {
+		if v == dir {
+			p.currDir = dir
+			return nil
+		}
+	}
+	return errors.New("Illegal directory")
 }
 
 func (p *LocalProvider) Flush() {

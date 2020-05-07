@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	//"tap/backend/local"
-	//"fmt"
 	"context"
+	"fmt"
 	"google.golang.org/grpc"
 	"log"
 	"os"
@@ -43,10 +43,17 @@ func main() {
 		panic("server is not running")
 	}
 
-	if !window.SetLocalProvider([]string{*dir}) {
+	if !window.SetLocalProvider([]string{*dir, "./testDir"}) {
 		panic("set localprovider fatal")
 	}
 
+	defer func() {
+		if err := recover(); err != nil {
+			window.Close()
+			fmt.Println(err)
+		}
+	}()
 	window.Init()
+
 	window.Close()
 }

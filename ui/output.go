@@ -23,7 +23,6 @@ func newOutput(window *Window) *output {
 	o.self.SetRect(0, 0,
 		int(maxX*(_VOLUME_WIDTH+_PLAY_STATUS_WIDTH)),
 		o.window.MaxY-_PLAY_STATUS_HEIGHT-_COUNT_DOWN_HEIGHT-_HELP_BOX_HEIGHT)
-	//h.window.setPersentRect(h.self, 0.07, 0.05, 0.2, 0.3)
 	return o
 }
 

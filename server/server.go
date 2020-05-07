@@ -33,7 +33,7 @@ func (server *Play) Ping(ctx context.Context, empty *Empty) (*Empty, error) {
 }
 
 func (server *Play) PlayOrPause(ctx context.Context, request *PlayRequest) (*PlayAudioInfo, error) {
-	if authInfo, err := PlayOrPause(request.Name); err != nil {
+	if authInfo, err := PlayOrPause(request.AudioPath); err != nil {
 		return nil, err
 	} else {
 		return fommatPlayAudioInfo(authInfo), nil
@@ -97,12 +97,20 @@ func (server *Play) SetLocalProvider(ctx context.Context,
 	return &Empty{}, nil
 }
 
+func (server *Play) SetDir(ctx context.Context, dir *Dir) (*Empty, error) {
+	err := provider.SetDir(dir.Value)
+	return &Empty{}, err
+}
+
 func (server *Play) Provider(ctx context.Context, empty *Empty) (*ProviderReply, error) {
 	return &ProviderReply{
 		ProviderType: int32(providerType),
 		Name:         providerName,
+		CurrDir:      provider.CurrDir(),
+		Dirs:         provider.ListDirs(),
 	}, nil
 }
+
 func (server *Play) PushInfo(empty *Empty, res Play_PushInfoServer) error {
 	ch := make(chan *PlayAudioInfo, 100)
 	server.pushChan = ch
