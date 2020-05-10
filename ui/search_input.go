@@ -47,7 +47,7 @@ func (s *searchInput) WidgetKeys() string {
 func (s *searchInput) HandleEvent(input string) {
 	switch input {
 	case "<Enter>":
-		s.window.ChoseItem(s.window.al)
+		s.window.ChoseItem(s.window.audioList)
 	case "<C-l>":
 		s.self.Reset()
 		s.flushAl()
@@ -59,5 +59,5 @@ func (s *searchInput) HandleEvent(input string) {
 
 func (s *searchInput) flushAl() {
 	rows := s.window.Search(s.self.String())
-	s.window.al.NotifyRowsChange(rows)
+	s.window.audioList.NotifyRowsChange(rows)
 }

@@ -14,6 +14,14 @@ type random struct {
 	it            *list.Element
 
 	beginAuthPath string
+	currDir       *string
+}
+
+func newRandom(provider backend.Provider, currDir *string) *random {
+	return &random{
+		provider: provider,
+		currDir:  currDir,
+	}
 }
 
 func (r *random) NextAudioPath() string {
@@ -41,7 +49,7 @@ func (r *random) getNextAudioPath() string {
 
 func (r *random) buildAudioPathList() {
 	r.audioPathList = list.New()
-	items, err := r.provider.ListAll()
+	items, err := r.provider.ListAll(*(r.currDir))
 	if err != nil {
 		log.Println(err)
 		return

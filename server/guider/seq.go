@@ -13,6 +13,15 @@ type seq struct {
 
 	audioPathList *list.List
 	it            *list.Element
+
+	currDir *string
+}
+
+func newSeq(provider backend.Provider, currDir *string) *seq {
+	return &seq{
+		provider: provider,
+		currDir:  currDir,
+	}
 }
 
 func (s *seq) NextAudioPath() string {
@@ -27,7 +36,7 @@ func (s *seq) NextAudioPath() string {
 
 func (s *seq) SetCurrAudioPath(audioPath string) {
 	if s.audioPathList.Len() == 0 {
-		items, err := s.provider.ListAll()
+		items, err := s.provider.ListAll(*(s.currDir))
 		if err != nil {
 			log.Println(err)
 			return

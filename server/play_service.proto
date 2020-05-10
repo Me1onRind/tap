@@ -3,7 +3,7 @@ syntax = "proto3";
 package server;
 
 service Play {
-    rpc PlayOrPause(PlayRequest) returns (PlayAudioInfo) {}
+    rpc PlayOrPause(PlayRequest) returns (Empty) {}
     rpc Status(Empty) returns (PlayAudioInfo) {}
     rpc Stop(Empty) returns(Empty){}
     rpc SetPlayMode(PlayMode) returns (Empty){}

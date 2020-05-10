@@ -86,7 +86,7 @@ func (d *dirList) HandleEvent(input string) {
 		d.currDir = d.dirs[d.self.SelectedRow]
 		d.window.SetDir(d.currDir)
 		rows := d.window.ListAll()
-		d.window.al.NotifyRowsChange(rows)
+		d.window.audioList.NotifyRowsChange(rows)
 		d.Print()
 	}
 }

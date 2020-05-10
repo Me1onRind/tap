@@ -1,39 +1,27 @@
 package local
 
 import (
-	"errors"
 	"io/ioutil"
 	"path/filepath"
 	"regexp"
 )
 
 type LocalProvider struct {
-	dirs  []string
 	files map[string][]string
-
-	currDir string
 }
 
-func NewLocalProvider(dirs []string) *LocalProvider {
-	p := &LocalProvider{
+func NewLocalProvider() *LocalProvider {
+	return &LocalProvider{
 		files: make(map[string][]string),
 	}
-	for _, v := range dirs {
-		if dir, err := filepath.Abs(v); err == nil {
-			p.dirs = append(p.dirs, dir)
-		}
-	}
-	currDir, _ := filepath.Abs(dirs[0])
-	p.currDir = currDir
-	return p
 }
 
-func (p *LocalProvider) ListAll() ([]string, error) {
-	if items, ok := p.files[p.currDir]; ok {
+func (p *LocalProvider) ListAll(dir string) ([]string, error) {
+	if items, ok := p.files[dir]; ok {
 		return items, nil
 	}
 
-	rd, err := ioutil.ReadDir(p.currDir)
+	rd, err := ioutil.ReadDir(dir)
 	if err != nil {
 		return nil, err
 	}
@@ -47,38 +35,14 @@ func (p *LocalProvider) ListAll() ([]string, error) {
 		if ext != ".mp3" && ext != ".wmv" {
 			continue
 		}
-		files = append(files, p.currDir+"/"+fi.Name())
+		files = append(files, dir+fi.Name())
 	}
-	p.files[p.currDir] = files
+	p.files[dir] = files
 	return files, nil
 }
 
-func (p *LocalProvider) ListDirs() []string {
-	var ret []string
-	for _, v := range p.dirs {
-		dir, _ := filepath.Abs(v)
-		if len(dir) > 0 {
-			ret = append(ret, dir)
-		}
-	}
-	return ret
-}
-
-func (p *LocalProvider) CurrDir() string {
-	return p.currDir
-}
-
-func (p *LocalProvider) Search(reg string) ([]string, error) {
-	var files []string
-	var err error
-	files = p.files[p.currDir]
-	if files == nil {
-		files, err = p.ListAll()
-		if err != nil {
-			return nil, err
-		}
-	}
-
+func (p *LocalProvider) Search(reg string, dir string) ([]string, error) {
+	files, err := p.ListAll(dir)
 	regex, err := regexp.Compile(reg)
 	if err != nil {
 		return nil, err
@@ -91,20 +55,6 @@ func (p *LocalProvider) Search(reg string) ([]string, error) {
 		}
 	}
 	return ret, nil
-}
-
-func (p *LocalProvider) Filepath(name string) string {
-	return p.currDir + "/" + name
-}
-
-func (p *LocalProvider) SetDir(dir string) error {
-	for _, v := range p.dirs {
-		if v == dir {
-			p.currDir = dir
-			return nil
-		}
-	}
-	return errors.New("Illegal directory")
 }
 
 func (p *LocalProvider) Flush() {

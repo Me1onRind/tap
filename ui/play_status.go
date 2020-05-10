@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
+	"path/filepath"
 	"tap/player"
 	"tap/server"
 	"time"
@@ -113,7 +114,7 @@ func (p *playStatus) Notify(info *server.PlayAudioInfo) {
 func (p *playStatus) init(info *server.PlayAudioInfo) {
 	p.Status = info.Status
 	p.LoopMode = info.Mode
-	p.AudioName = info.Pathinfo
+	p.AudioName = filepath.Base(info.Pathinfo)
 	p.Duration = info.Duration
 	p.CurrPro = info.Curr
 	p.Endline = int64(info.Duration-info.Curr) + time.Now().Unix()

@@ -2,7 +2,6 @@ package server
 
 import (
 	"sync"
-	"tap/player"
 	"tap/server/guider"
 )
 
@@ -21,15 +20,13 @@ const (
 )
 
 var (
-	worker *player.PlayerWorker
-	mutex  sync.Mutex
-	gd     guider.Guider
+	mutex sync.Mutex
+	gd    guider.Guider
 )
 
 func init() {
-	worker = player.NewPlayerWorker()
-	worker.AddCallback(func(p *player.PlayerWorker) {
-		audioPath := gd.NextAudioPath()
-		p.Play(audioPath)
-	})
+	//worker.AddCallback(func(p *player.PlayerWorker) {
+	//audioPath := gd.NextAudioPath()
+	//p.Play(audioPath)
+	//})
 }

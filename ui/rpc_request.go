@@ -50,17 +50,15 @@ func (w *Window) ServerIsHealthLive() bool {
 	return true
 }
 
-func (w *Window) PlayOrPause(audioPath string) *server.PlayAudioInfo {
+func (w *Window) PlayOrPause(audioPath string) {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
-	res, err := w.playerClient.PlayOrPause(ctx, &server.PlayRequest{
+	_, err := w.playerClient.PlayOrPause(ctx, &server.PlayRequest{
 		AudioPath: audioPath,
 	})
 	if err != nil {
 		w.op.Println(err)
-		return nil
 	}
-	return res
 }
 
 func (w *Window) SetVolume(volume float32) bool {
@@ -153,8 +151,8 @@ func (w *Window) subscribe() {
 		}
 
 		if info != nil {
-			w.ps.Notify(info)
-			w.al.NotifyAudioPathChange(info.Pathinfo)
+			w.playStatus.Notify(info)
+			w.audioList.NotifyAudioPathChange(info.Pathinfo)
 		}
 	}
 }

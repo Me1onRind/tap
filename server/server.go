@@ -32,16 +32,17 @@ func (server *Play) Ping(ctx context.Context, empty *Empty) (*Empty, error) {
 	return &Empty{}, nil
 }
 
-func (server *Play) PlayOrPause(ctx context.Context, request *PlayRequest) (*PlayAudioInfo, error) {
-	if authInfo, err := PlayOrPause(request.AudioPath); err != nil {
+func (server *Play) PlayOrPause(ctx context.Context, request *PlayRequest) (*Empty, error) {
+	if authInfo, err := m.PlayOrPause(request.AudioPath); err != nil {
 		return nil, err
 	} else {
-		return fommatPlayAudioInfo(authInfo), nil
+		server.push(authInfo)
+		return &Empty{}, nil
 	}
 }
 
 func (server *Play) Status(ctx context.Context, empty *Empty) (*PlayAudioInfo, error) {
-	if authInfo, err := Status(); err != nil {
+	if authInfo, err := m.PlayWorker.CurrAudioInfo(); err != nil {
 		return nil, err
 	} else {
 		return fommatPlayAudioInfo(authInfo), nil
@@ -49,27 +50,27 @@ func (server *Play) Status(ctx context.Context, empty *Empty) (*PlayAudioInfo, e
 }
 
 func (server *Play) SetVolume(ctx context.Context, volume *VolumeRequest) (*Empty, error) {
-	SetVolume(volume.Volume)
+	m.PlayWorker.SetVolume(volume.Volume)
 	return &Empty{}, nil
 }
 
 func (server *Play) Seek(ctx context.Context, second *Second) (*Empty, error) {
-	Seek(second.Value)
+	m.PlayWorker.Seek(second.Value)
 	return &Empty{}, nil
 }
 
 func (server *Play) Stop(ctx context.Context, empty *Empty) (*Empty, error) {
-	Stop()
+	m.PlayWorker.Stop()
 	return &Empty{}, nil
 }
 
 func (server *Play) SetPlayMode(ctx context.Context, playMode *PlayMode) (*Empty, error) {
-	mode = playMode.Mode
+	m.PlayMode = playMode.Mode
 	return &Empty{}, nil
 }
 
 func (server *Play) ListAll(ctx context.Context, empty *Empty) (*QueryReplay, error) {
-	all, err := ListAll()
+	all, err := m.ListAll()
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +81,7 @@ func (server *Play) Search(ctx context.Context, request *SearchRequest) (*QueryR
 	if len(request.Input) == 0 {
 		return server.ListAll(ctx, nil)
 	}
-	all, err := Search(request.Input)
+	all, err := m.Search(request.Input)
 	if err != nil {
 		return nil, err
 	}
@@ -93,22 +94,21 @@ func (server *Play) SetLocalProvider(ctx context.Context,
 	if len(localPrivoder.Dirs) == 0 {
 		return nil, errors.New("Dirs can't be length 0")
 	}
-	provider = local.NewLocalProvider(localPrivoder.Dirs)
+	m.Init(local.NewLocalProvider(), LocalPrivoderType, localPrivoder.Dirs)
 	return &Empty{}, nil
-}
-
-func (server *Play) SetDir(ctx context.Context, dir *Dir) (*Empty, error) {
-	err := provider.SetDir(dir.Value)
-	return &Empty{}, err
 }
 
 func (server *Play) Provider(ctx context.Context, empty *Empty) (*ProviderReply, error) {
 	return &ProviderReply{
-		ProviderType: int32(providerType),
-		Name:         providerName,
-		CurrDir:      provider.CurrDir(),
-		Dirs:         provider.ListDirs(),
+		ProviderType: int32(m.ProviderType),
+		Name:         "",
+		CurrDir:      m.CurrDir,
+		Dirs:         m.Dirs,
 	}, nil
+}
+
+func (server *Play) SetDir(ctx context.Context, dir *Dir) (*Empty, error) {
+	return &Empty{}, nil
 }
 
 func (server *Play) PushInfo(empty *Empty, res Play_PushInfoServer) error {
@@ -140,7 +140,6 @@ func fommatPlayAudioInfo(authInfo *player.AudioInfo) *PlayAudioInfo {
 		Curr:     authInfo.CurrSecond,
 		Pathinfo: authInfo.Pathinfo,
 		Volume:   authInfo.Volume,
-		Mode:     mode,
 		Name:     pathToName(authInfo.Pathinfo),
 	}
 }

@@ -1,11 +1,7 @@
 package backend
 
 type Provider interface {
-	ListAll() ([]string, error)
-	ListDirs() []string
-	CurrDir() string
-	Search(input string) ([]string, error)
-	Filepath(name string) string
-	SetDir(dir string) error
+	ListAll(dir string) ([]string, error)
+	Search(input string, dir string) ([]string, error)
 	Flush()
 }

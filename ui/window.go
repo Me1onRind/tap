@@ -33,8 +33,8 @@ type Window struct {
 	MaxY int
 
 	playerClient server.PlayClient
-	ps           *playStatus
-	al           *audioList
+	playStatus   *playStatus
+	audioList    *audioList
 	dl           *dirList
 	vc           *volumeController
 	si           *searchInput
@@ -67,14 +67,15 @@ func (w *Window) Init() {
 	w.startPrint()
 
 	// cronjob
-	go w.ps.Cronjob()
-	go w.al.Cronjob()
+	go w.playStatus.Cronjob()
+	go w.audioList.Cronjob()
 
 	// tab term list
 	w.tabItems = append(w.tabItems, w.si)
-	w.tabItems = append(w.tabItems, w.al)
+	w.tabItems = append(w.tabItems, w.audioList)
 	w.tabItems = append(w.tabItems, w.dl)
-	w.ChoseItem(w.al)
+
+	w.ChoseItem(w.audioList)
 
 	go w.subscribe()
 
@@ -87,17 +88,17 @@ func (w *Window) Init() {
 		case "<C-f>":
 			w.ChoseItem(w.si)
 		case "<C-a>":
-			w.ChoseItem(w.al)
+			w.ChoseItem(w.audioList)
 		case "<C-k>":
 			w.vc.Up()
 		case "<C-j>":
 			w.vc.Down()
 		case "<C-n>":
-			w.ps.ChangeLoopMode()
+			w.playStatus.ChangeLoopMode()
 		case "<Left>":
-			w.ps.SeekAudioFile(-2)
+			w.playStatus.SeekAudioFile(-2)
 		case "<Right>":
-			w.ps.SeekAudioFile(2)
+			w.playStatus.SeekAudioFile(2)
 		case "<C-c>", "<C-q>", "<Escape>":
 			return
 		default:
@@ -114,13 +115,13 @@ func (w *Window) SyncPrint(print func()) {
 }
 
 func (w *Window) initMember() {
-	w.ps = newPlayStatus(w)
+	w.playStatus = newPlayStatus(w)
 	w.vc = newVolumeController(w)
-	w.al = newAudioList(w)
+	w.audioList = newAudioList(w)
 
-	w.initPrinters = append(w.initPrinters, w.ps)
+	w.initPrinters = append(w.initPrinters, w.playStatus)
 	w.initPrinters = append(w.initPrinters, w.vc)
-	w.initPrinters = append(w.initPrinters, w.al)
+	w.initPrinters = append(w.initPrinters, w.audioList)
 
 	w.dl = newDirList(w)
 	w.si = newSearchInput(w)

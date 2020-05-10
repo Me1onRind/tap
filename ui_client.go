@@ -22,9 +22,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	//logfile.Write([]byte("123"))
 	log.SetOutput(logfile)
-	//log.Println("123")
 	dir = flag.String("dir", "./", "")
 	flag.Parse()
 
@@ -38,6 +36,12 @@ func main() {
 
 	rpcClient := server.NewPlayClient(conn)
 	window := ui.NewWindow(rpcClient)
+	defer func() {
+		if err := recover(); err != nil {
+			window.Close()
+			fmt.Println(err)
+		}
+	}()
 
 	if !window.ServerIsHealthLive() {
 		panic("server is not running")
@@ -47,12 +51,6 @@ func main() {
 		panic("set localprovider fatal")
 	}
 
-	defer func() {
-		if err := recover(); err != nil {
-			window.Close()
-			fmt.Println(err)
-		}
-	}()
 	window.Init()
 
 	window.Close()
