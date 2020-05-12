@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
+	"tap/rpc_client"
 	"tap/server"
 )
 
@@ -46,7 +47,7 @@ func (v *volumeController) Up() {
 		return
 	}
 	v.volume += 0.01
-	v.window.SetVolume(v.volume)
+	rpc_client.SetVolume(v.volume)
 	v.Print()
 }
 
@@ -55,7 +56,7 @@ func (v *volumeController) Down() {
 		return
 	}
 	v.volume -= 0.01
-	v.window.SetVolume(v.volume)
+	rpc_client.SetVolume(v.volume)
 	v.Print()
 }
 

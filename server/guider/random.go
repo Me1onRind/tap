@@ -18,10 +18,12 @@ type random struct {
 }
 
 func newRandom(provider backend.Provider, currDir *string) *random {
-	return &random{
+	r := &random{
 		provider: provider,
 		currDir:  currDir,
 	}
+
+	return r
 }
 
 func (r *random) NextAudioPath() string {
@@ -34,7 +36,7 @@ func (r *random) NextAudioPath() string {
 
 func (r *random) SetCurrAudioPath(audioPath string) {
 	r.beginAuthPath = audioPath
-	r.buildAudioPathList()
+	r.it = r.buildAudioPathList()
 }
 
 func (r *random) getNextAudioPath() string {
@@ -47,21 +49,27 @@ func (r *random) getNextAudioPath() string {
 	return audioPath
 }
 
-func (r *random) buildAudioPathList() {
+func (r *random) buildAudioPathList() *list.Element {
 	r.audioPathList = list.New()
 	items, err := r.provider.ListAll(*(r.currDir))
 	if err != nil {
 		log.Println(err)
-		return
+		return nil
 	}
 
 	rd := rand.New(rand.NewSource(time.Now().UnixNano()))
 	for i := 0; i < len(items); i++ {
 		index := rd.Intn(len(items)-i) + i
 		items[i], items[index] = items[index], items[i]
-		e := r.audioPathList.PushBack(items[i])
 		if items[i] == r.beginAuthPath {
-			r.it = e
+			continue
 		}
+		r.audioPathList.PushBack(items[i])
 	}
+
+	return r.audioPathList.Front()
+}
+
+func (r *random) PreAudioPath() string {
+	return ""
 }

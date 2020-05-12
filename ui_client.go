@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc"
 	"log"
 	"os"
+	"tap/rpc_client"
 	"tap/server"
 	"tap/ui"
 	"time"
@@ -35,7 +36,9 @@ func main() {
 	defer conn.Close()
 
 	rpcClient := server.NewPlayClient(conn)
-	window := ui.NewWindow(rpcClient)
+	rpc_client.SetRpcClient(rpcClient)
+
+	window := ui.NewWindow()
 	defer func() {
 		if err := recover(); err != nil {
 			window.Close()
@@ -43,13 +46,14 @@ func main() {
 		}
 	}()
 
-	if !window.ServerIsHealthLive() {
+	if !rpc_client.ServerIsHealthLive() {
 		panic("server is not running")
 	}
 
-	if !window.SetLocalProvider([]string{*dir, "./testDir"}) {
+	if !rpc_client.SetLocalProvider([]string{*dir, "./testDir"}) {
 		panic("set localprovider fatal")
 	}
+	rpc_client.SetOutput(window.GetOutput())
 
 	window.Init()
 

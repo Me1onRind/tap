@@ -5,7 +5,7 @@ import (
 	"github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
 	"path/filepath"
-	//"tap/server"
+	"tap/rpc_client"
 )
 
 type dirList struct {
@@ -36,7 +36,7 @@ func newDirList(w *Window) *dirList {
 		int(maxX*(_VOLUME_WIDTH+_PLAY_STATUS_WIDTH)),
 		d.window.MaxY-_COUNT_DOWN_HEIGHT-_PLAY_STATUS_HEIGHT)
 	d.self.Title = "Directory list"
-	providerInfo := d.window.Provider()
+	providerInfo := rpc_client.Provider()
 	if providerInfo != nil {
 		d.dirs = providerInfo.Dirs
 		d.currDir = providerInfo.CurrDir
@@ -84,8 +84,8 @@ func (d *dirList) HandleEvent(input string) {
 		d.self.ScrollUp()
 	case "<Enter>", "<Space>":
 		d.currDir = d.dirs[d.self.SelectedRow]
-		d.window.SetDir(d.currDir)
-		rows := d.window.ListAll()
+		rpc_client.SetDir(d.currDir)
+		rows := rpc_client.ListAll()
 		d.window.audioList.NotifyRowsChange(rows)
 		d.Print()
 	}

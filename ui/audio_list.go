@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
-	//"log"
 	"path/filepath"
+	"tap/rpc_client"
 	"tap/server"
 )
 
@@ -55,7 +55,7 @@ func (a *audioList) Leave() {
 }
 
 func (a *audioList) InitPrint(info *server.PlayAudioInfo) {
-	a.rows = a.window.ListAll()
+	a.rows = rpc_client.ListAll()
 	a.audioPath = info.Name
 	for k, v := range a.self.Rows {
 		if v == a.audioPath {
@@ -128,5 +128,5 @@ func (a *audioList) playOrPause() {
 	if a.self.SelectedRow >= len(a.self.Rows) {
 		return
 	}
-	a.window.PlayOrPause(a.rows[a.self.SelectedRow])
+	rpc_client.PlayOrPause(a.rows[a.self.SelectedRow])
 }

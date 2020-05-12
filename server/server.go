@@ -65,7 +65,7 @@ func (server *Play) Stop(ctx context.Context, empty *Empty) (*Empty, error) {
 }
 
 func (server *Play) SetPlayMode(ctx context.Context, playMode *PlayMode) (*Empty, error) {
-	m.PlayMode = playMode.Mode
+	m.SetPlayMode(playMode.Mode)
 	return &Empty{}, nil
 }
 
@@ -94,7 +94,7 @@ func (server *Play) SetLocalProvider(ctx context.Context,
 	if len(localPrivoder.Dirs) == 0 {
 		return nil, errors.New("Dirs can't be length 0")
 	}
-	m.Init(local.NewLocalProvider(), LocalPrivoderType, localPrivoder.Dirs)
+	m.Init(local.NewLocalProvider(), LocalPrivoderType, localPrivoder.Dirs, 1)
 	return &Empty{}, nil
 }
 
@@ -141,6 +141,7 @@ func fommatPlayAudioInfo(authInfo *player.AudioInfo) *PlayAudioInfo {
 		Pathinfo: authInfo.Pathinfo,
 		Volume:   authInfo.Volume,
 		Name:     pathToName(authInfo.Pathinfo),
+		Mode:     m.PlayMode,
 	}
 }
 

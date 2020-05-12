@@ -50,3 +50,7 @@ func (s *seq) SetCurrAudioPath(audioPath string) {
 		}
 	}
 }
+
+func (s *seq) PreAudioPath() string {
+	return ""
+}

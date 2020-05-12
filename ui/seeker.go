@@ -1,8 +1,8 @@
 package ui
 
 import (
-	//"log"
 	"sync"
+	"tap/rpc_client"
 	"time"
 )
 
@@ -35,7 +35,7 @@ func (s *seeker) Handle(second int64, name string, stopFirst bool) {
 	} else {
 		s.Shielding = true
 		if stopFirst {
-			s.w.PlayOrPause(name)
+			rpc_client.PlayOrPause(name)
 		}
 		s.running = true
 		go s.pipe(name)
@@ -55,9 +55,9 @@ func (s *seeker) pipe(name string) {
 		s.mutex.Lock()
 		if !s.tick {
 			// todo send
-			s.w.SeekAudioFile(s.second)
+			rpc_client.SeekAudioFile(s.second)
 			s.reset()
-			s.w.PlayOrPause(name)
+			rpc_client.PlayOrPause(name)
 			s.mutex.Unlock()
 			break
 		}

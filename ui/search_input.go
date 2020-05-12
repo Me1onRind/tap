@@ -2,6 +2,7 @@ package ui
 
 import (
 	"github.com/gizak/termui/v3"
+	"tap/rpc_client"
 	"tap/ui/custom_widgets"
 )
 
@@ -58,6 +59,6 @@ func (s *searchInput) HandleEvent(input string) {
 }
 
 func (s *searchInput) flushAl() {
-	rows := s.window.Search(s.self.String())
+	rows := rpc_client.Search(s.self.String())
 	s.window.audioList.NotifyRowsChange(rows)
 }

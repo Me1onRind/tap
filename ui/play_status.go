@@ -6,7 +6,9 @@ import (
 	"github.com/gizak/termui/v3/widgets"
 	"path/filepath"
 	"tap/player"
+	"tap/rpc_client"
 	"tap/server"
+	"tap/server/guider"
 	"time"
 )
 
@@ -20,10 +22,10 @@ type playStatus struct {
 
 	skr *seeker
 
-	AudioName   string
+	AudioPath   string
 	Status      uint32
 	StatusLabel string
-	LoopMode    uint32
+	LoopMode    guider.Mode
 
 	Duration int64
 	Endline  int64
@@ -100,7 +102,7 @@ func (p *playStatus) SeekAudioFile(second int64) {
 
 	p.CurrPro += second
 	p.Endline -= second
-	p.skr.Handle(p.CurrPro, p.AudioName, p.Status == player.PLAY)
+	p.skr.Handle(p.CurrPro, p.AudioPath, p.Status == player.PLAY)
 	p.updateProgress()
 	p.window.SyncPrint(p.printPro)
 }
@@ -113,8 +115,8 @@ func (p *playStatus) Notify(info *server.PlayAudioInfo) {
 
 func (p *playStatus) init(info *server.PlayAudioInfo) {
 	p.Status = info.Status
-	p.LoopMode = info.Mode
-	p.AudioName = filepath.Base(info.Pathinfo)
+	p.LoopMode = guider.Mode(info.Mode)
+	p.AudioPath = info.Pathinfo
 	p.Duration = info.Duration
 	p.CurrPro = info.Curr
 	p.Endline = int64(info.Duration-info.Curr) + time.Now().Unix()
@@ -165,22 +167,22 @@ func (p *playStatus) text() string {
 			"\nAudio:      %s\n"+
 			"\nDuration:   %s\n"+
 			"\nCycelMode:  %s\n",
-		p.StatusLabel, p.AudioName, formatDuration(p.Duration), p.formatLoopMode())
+		p.StatusLabel, filepath.Base(p.AudioPath), formatDuration(p.Duration), p.formatLoopMode())
 }
 
 func (p *playStatus) ChangeLoopMode() {
-	newModel := server.SEQ_MODE
+	newModel := guider.SEQ
 	switch p.LoopMode {
-	case server.SINGLE_MODE:
-		newModel = server.RANDOM_MODE
-	case server.RANDOM_MODE:
-		newModel = server.SEQ_MODE
-	case server.SEQ_MODE:
-		newModel = server.SINGLE_MODE
+	case guider.SEQ:
+		newModel = guider.RANDOM
+	case guider.RANDOM:
+		newModel = guider.SINGLE
+	case guider.SINGLE:
+		newModel = guider.SEQ
 	}
-	p.window.ChangeLoopModel(newModel)
+	rpc_client.ChangeLoopModel(newModel)
 
-	info := p.window.PlayStatus()
+	info := rpc_client.PlayStatus()
 	p.Notify(info)
 }
 
@@ -190,11 +192,11 @@ func formatDuration(t int64) string {
 
 func (p *playStatus) formatLoopMode() string {
 	switch p.LoopMode {
-	case server.SINGLE_MODE:
+	case guider.SINGLE:
 		return "Single 🔂"
-	case server.RANDOM_MODE:
+	case guider.RANDOM:
 		return "Random 🔀"
-	case server.SEQ_MODE:
+	case guider.SEQ:
 		return "Order  🔁"
 	default:
 		return "Unknow"

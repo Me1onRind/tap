@@ -2,9 +2,8 @@ package ui
 
 import (
 	"github.com/gizak/termui/v3"
-	//"log"
-	//"math"
 	"sync"
+	"tap/rpc_client"
 	"tap/server"
 )
 
@@ -32,15 +31,14 @@ type Window struct {
 	MaxX int
 	MaxY int
 
-	playerClient server.PlayClient
-	playStatus   *playStatus
-	audioList    *audioList
-	dl           *dirList
-	vc           *volumeController
-	si           *searchInput
-	hb           *helpBox
-	rhb          *rightHelpBox
-	op           *output
+	playStatus *playStatus
+	audioList  *audioList
+	dl         *dirList
+	vc         *volumeController
+	si         *searchInput
+	hb         *helpBox
+	rhb        *rightHelpBox
+	output     *output
 
 	initPrinters []initPrinter
 	printers     []printer
@@ -51,10 +49,9 @@ type Window struct {
 	mutex       sync.Mutex
 }
 
-func NewWindow(rpcClient server.PlayClient) *Window {
+func NewWindow() *Window {
 	w := &Window{
-		playerClient: rpcClient,
-		levelOffset:  0.00,
+		levelOffset: 0.00,
 	}
 	return w
 }
@@ -77,7 +74,10 @@ func (w *Window) Init() {
 
 	w.ChoseItem(w.audioList)
 
-	go w.subscribe()
+	go rpc_client.Subscribe(func(info *server.PlayAudioInfo) {
+		w.playStatus.Notify(info)
+		w.audioList.NotifyAudioPathChange(info.Name)
+	})
 
 	uiEvents := termui.PollEvents()
 	for {
@@ -127,17 +127,17 @@ func (w *Window) initMember() {
 	w.si = newSearchInput(w)
 	w.hb = newHelpBox(w)
 	w.rhb = newRightHelpBox(w)
-	w.op = newOutput(w)
+	w.output = newOutput(w)
 
 	w.printers = append(w.printers, w.dl)
 	w.printers = append(w.printers, w.si)
 	w.printers = append(w.printers, w.hb)
 	w.printers = append(w.printers, w.rhb)
-	w.printers = append(w.printers, w.op)
+	w.printers = append(w.printers, w.output)
 }
 
 func (w *Window) startPrint() {
-	info := w.PlayStatus()
+	info := rpc_client.PlayStatus()
 	if info == nil {
 		return
 	}
@@ -185,4 +185,8 @@ func (w *Window) Close() {
 
 func (w *Window) GetMax() (float64, float64) {
 	return float64(w.MaxX), float64(w.MaxY)
+}
+
+func (w *Window) GetOutput() rpc_client.Output {
+	return w.output
 }

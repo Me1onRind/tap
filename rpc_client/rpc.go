@@ -1,158 +1,179 @@
-package ui
+package rpc_client
 
 import (
-	//"github.com/gizak/termui/v3"
 	"context"
-	//"log"
-	//"tap/backend"
+	"log"
+	"os"
 	"tap/server"
+	"tap/server/guider"
 	"time"
+)
+
+var (
+	playerClient server.PlayClient
+	op           Output
 )
 
 const (
 	_TIME_OUT = 500
 )
 
-func (w *Window) SetLocalProvider(dirs []string) bool {
+func init() {
+	op = log.New(os.Stdout, "", log.LstdFlags)
+}
+
+type Output interface {
+	Println(values ...interface{})
+	Printf(format string, values ...interface{})
+}
+
+func SetRpcClient(p server.PlayClient) {
+	playerClient = p
+}
+
+func SetOutput(o Output) {
+	op = o
+}
+
+func SetLocalProvider(dirs []string) bool {
 	request := server.LocalProvider{
 		Dirs: dirs,
 	}
 
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
-	_, err := w.playerClient.SetLocalProvider(ctx, &request)
+	_, err := playerClient.SetLocalProvider(ctx, &request)
 	if err != nil {
-		w.op.Println(err)
+		op.Println(err)
 		return false
 	}
 	return true
 }
 
-func (w *Window) PlayStatus() *server.PlayAudioInfo {
+func PlayStatus() *server.PlayAudioInfo {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
-	a, err := w.playerClient.Status(ctx, &server.Empty{})
+	a, err := playerClient.Status(ctx, &server.Empty{})
 	if err != nil {
-		w.op.Println(err)
+		op.Println(err)
 		return nil
 	}
 	return a
 }
 
-func (w *Window) ServerIsHealthLive() bool {
+func ServerIsHealthLive() bool {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
-	_, err := w.playerClient.Ping(ctx, &server.Empty{})
+	_, err := playerClient.Ping(ctx, &server.Empty{})
 	if err != nil {
-		w.op.Println(err)
+		op.Println(err)
 		return false
 	}
 	return true
 }
 
-func (w *Window) PlayOrPause(audioPath string) {
+func PlayOrPause(audioPath string) {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
-	_, err := w.playerClient.PlayOrPause(ctx, &server.PlayRequest{
+	_, err := playerClient.PlayOrPause(ctx, &server.PlayRequest{
 		AudioPath: audioPath,
 	})
 	if err != nil {
-		w.op.Println(err)
+		op.Println(err)
 	}
 }
 
-func (w *Window) SetVolume(volume float32) bool {
+func SetVolume(volume float32) bool {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
-	_, err := w.playerClient.SetVolume(ctx, &server.VolumeRequest{
+	_, err := playerClient.SetVolume(ctx, &server.VolumeRequest{
 		Volume: volume,
 	})
 	if err != nil {
-		w.op.Println(err)
+		op.Println(err)
 		return false
 	}
 	return true
 }
 
-func (w *Window) ListAll() []string {
+func ListAll() []string {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
-	res, err := w.playerClient.ListAll(ctx, &server.Empty{})
+	res, err := playerClient.ListAll(ctx, &server.Empty{})
 	if err != nil {
-		w.op.Println(err)
+		op.Println(err)
 		return []string{}
 	}
 	return res.GetNames()
 }
 
-func (w *Window) Search(input string) []string {
+func Search(input string) []string {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
-	res, err := w.playerClient.Search(ctx, &server.SearchRequest{
+	res, err := playerClient.Search(ctx, &server.SearchRequest{
 		Input: input,
 	})
 	if err != nil {
-		w.op.Println(err)
+		op.Println(err)
 		return []string{}
 	}
 	return res.GetNames()
 }
 
-func (w *Window) ChangeLoopModel(mode uint32) {
+func ChangeLoopModel(mode guider.Mode) {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
-	_, err := w.playerClient.SetPlayMode(ctx, &server.PlayMode{
-		Mode: mode,
+	_, err := playerClient.SetPlayMode(ctx, &server.PlayMode{
+		Mode: uint32(mode),
 	})
 	if err != nil {
-		w.op.Println(err)
+		op.Println(err)
 	}
 }
 
-func (w *Window) SeekAudioFile(second int64) {
+func SeekAudioFile(second int64) {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
-	_, err := w.playerClient.Seek(ctx, &server.Second{
+	_, err := playerClient.Seek(ctx, &server.Second{
 		Value: second,
 	})
 	if err != nil {
-		w.op.Printf("request seek, value:%d, err:%s\n", second, err.Error())
+		op.Printf("request seek, value:%d, err:%s\n", second, err.Error())
 	}
 }
 
-func (w *Window) Provider() *server.ProviderReply {
+func Provider() *server.ProviderReply {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
-	p, err := w.playerClient.Provider(ctx, &server.Empty{})
+	p, err := playerClient.Provider(ctx, &server.Empty{})
 	if err != nil {
-		w.op.Println(err)
+		op.Println(err)
 		return nil
 	}
 	return p
 }
 
-func (w *Window) SetDir(dir string) {
+func SetDir(dir string) {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
-	_, err := w.playerClient.SetDir(ctx, &server.Dir{Value: dir})
+	_, err := playerClient.SetDir(ctx, &server.Dir{Value: dir})
 	if err != nil {
-		w.op.Println(err)
+		op.Println(err)
 	}
 }
 
-func (w *Window) subscribe() {
-	res, _ := w.playerClient.PushInfo(context.Background(), &server.Empty{})
+func Subscribe(f func(info *server.PlayAudioInfo)) {
+	res, _ := playerClient.PushInfo(context.Background(), &server.Empty{})
 	for {
 		info, err := res.Recv()
 		if err != nil {
-			w.op.Println(err)
+			op.Println(err)
 			res.CloseSend()
 			return
 		}
 
 		if info != nil {
-			w.playStatus.Notify(info)
-			w.audioList.NotifyAudioPathChange(info.Pathinfo)
+			f(info)
 		}
 	}
 }
