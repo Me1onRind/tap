@@ -31,18 +31,19 @@ type Window struct {
 	MaxX int
 	MaxY int
 
-	playStatus *playStatus
-	audioList  *audioList
-	dl         *dirList
-	vc         *volumeController
-	si         *searchInput
-	hb         *helpBox
-	rhb        *rightHelpBox
-	output     *output
+	playStatus       *playStatus
+	audioList        *audioList
+	dirList          *dirList
+	volumeController *volumeController
+	searchInput      *searchInput
+	helpBox          *helpBox
+	rightHelpBox     *rightHelpBox
+	output           *output
 
 	initPrinters []initPrinter
 	printers     []printer
 	tabItems     []item
+	focus        item
 	tabIndex     int
 
 	levelOffset float64
@@ -68,9 +69,8 @@ func (w *Window) Init() {
 	go w.audioList.Cronjob()
 
 	// tab term list
-	w.tabItems = append(w.tabItems, w.si)
 	w.tabItems = append(w.tabItems, w.audioList)
-	w.tabItems = append(w.tabItems, w.dl)
+	w.tabItems = append(w.tabItems, w.dirList)
 
 	w.ChoseItem(w.audioList)
 
@@ -86,13 +86,13 @@ func (w *Window) Init() {
 		case "<Tab>":
 			w.nextItem()
 		case "<C-f>":
-			w.ChoseItem(w.si)
+			w.ChoseItem(w.searchInput)
 		case "<C-a>":
 			w.ChoseItem(w.audioList)
-		case "<C-k>":
-			w.vc.Up()
-		case "<C-j>":
-			w.vc.Down()
+		case "<Up>":
+			w.volumeController.Up()
+		case "<Down>":
+			w.volumeController.Down()
 		case "<C-n>":
 			w.playStatus.ChangeLoopMode()
 		case "<Left>":
@@ -102,8 +102,8 @@ func (w *Window) Init() {
 		case "<C-c>", "<C-q>", "<Escape>":
 			return
 		default:
-			w.tabItems[w.tabIndex].HandleEvent(e.ID)
-			w.tabItems[w.tabIndex].Print()
+			w.focus.HandleEvent(e.ID)
+			w.focus.Print()
 		}
 	}
 }
@@ -116,23 +116,23 @@ func (w *Window) SyncPrint(print func()) {
 
 func (w *Window) initMember() {
 	w.playStatus = newPlayStatus(w)
-	w.vc = newVolumeController(w)
+	w.volumeController = newVolumeController(w)
 	w.audioList = newAudioList(w)
 
 	w.initPrinters = append(w.initPrinters, w.playStatus)
-	w.initPrinters = append(w.initPrinters, w.vc)
+	w.initPrinters = append(w.initPrinters, w.volumeController)
 	w.initPrinters = append(w.initPrinters, w.audioList)
 
-	w.dl = newDirList(w)
-	w.si = newSearchInput(w)
-	w.hb = newHelpBox(w)
-	w.rhb = newRightHelpBox(w)
+	w.dirList = newDirList(w)
+	w.searchInput = newSearchInput(w)
+	w.helpBox = newHelpBox(w)
+	w.rightHelpBox = newRightHelpBox(w)
 	w.output = newOutput(w)
 
-	w.printers = append(w.printers, w.dl)
-	w.printers = append(w.printers, w.si)
-	w.printers = append(w.printers, w.hb)
-	w.printers = append(w.printers, w.rhb)
+	w.printers = append(w.printers, w.dirList)
+	w.printers = append(w.printers, w.searchInput)
+	w.printers = append(w.printers, w.helpBox)
+	w.printers = append(w.printers, w.rightHelpBox)
 	w.printers = append(w.printers, w.output)
 }
 
@@ -152,21 +152,28 @@ func (w *Window) startPrint() {
 }
 
 func (w *Window) nextItem() {
-	w.tabItems[w.tabIndex].Leave()
+	w.focus.Leave()
 	if w.tabIndex == len(w.tabItems)-1 {
 		w.tabIndex = 0
 	} else {
 		w.tabIndex++
 	}
-	w.entry()
+	w.focus = w.tabItems[w.tabIndex]
+	w.focus.Entry()
 }
 
 func (w *Window) ChoseItem(it item) {
+	defer func() {
+		if w.focus != nil {
+			w.focus.Leave()
+		}
+		w.focus = it
+		w.focus.Entry()
+	}()
+
 	for k, v := range w.tabItems {
 		if v == it {
-			w.tabItems[w.tabIndex].Leave()
 			w.tabIndex = k
-			w.entry()
 			return
 		}
 	}
@@ -174,7 +181,7 @@ func (w *Window) ChoseItem(it item) {
 
 func (w *Window) entry() {
 	it := w.tabItems[w.tabIndex]
-	w.rhb.UpdateText(it.WidgetKeys())
+	w.rightHelpBox.UpdateText(it.WidgetKeys())
 	it.Entry()
 
 }

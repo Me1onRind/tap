@@ -47,11 +47,11 @@ func (s *searchInput) WidgetKeys() string {
 
 func (s *searchInput) HandleEvent(input string) {
 	switch input {
-	case "<Enter>":
-		s.window.ChoseItem(s.window.audioList)
 	case "<C-l>":
 		s.self.Reset()
 		s.flushAl()
+	case "<Enter>":
+		s.window.ChoseItem(s.window.audioList)
 	default:
 		s.self.HandleInput(input)
 		s.flushAl()

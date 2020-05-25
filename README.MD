@@ -18,5 +18,5 @@ export GODEBUG=cgocheck=0
 ## Todo
 
 - Support mutil-diretory
-- Output
+- Change a few opearation
 - Support Minio

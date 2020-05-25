@@ -20,13 +20,6 @@ func (h *helpBox) Leave() {
 	h.Print()
 }
 
-func (h *helpBox) HandleEvent(intput string) {
-	switch intput {
-	case "j", "<Down>":
-	case "k", "<Up>":
-	}
-}
-
 func newHelpBox(window *Window) *helpBox {
 	h := &helpBox{
 		self:   widgets.NewParagraph(),
@@ -38,8 +31,8 @@ func newHelpBox(window *Window) *helpBox {
 		"<Tab>   Next item\n" +
 			"<C-f>   Search\n" +
 			"<C-a>   Audio List\n" +
-			"<C-k>   Volume up\n" +
-			"<C-j>   Volume down\n" +
+			"<Up>    Volume up\n" +
+			"<Down>  Volume down\n" +
 			"<C-n>   Change Loop Mode\n" +
 			"<Left>  Rewind\n" +
 			"<Right> Forward\n" +

@@ -69,9 +69,9 @@ func (a *audioList) InitPrint(info *server.PlayAudioInfo) {
 func (a *audioList) HandleEvent(input string) {
 	audioListWg := a.self
 	switch input {
-	case "j", "<Down>":
+	case "<C-j>":
 		audioListWg.ScrollDown()
-	case "k", "<Up>":
+	case "<C-k>":
 		audioListWg.ScrollUp()
 	case "<C-d>":
 		audioListWg.ScrollHalfPageDown()
@@ -79,12 +79,15 @@ func (a *audioList) HandleEvent(input string) {
 		audioListWg.ScrollHalfPageUp()
 	case "<Enter>", "<Space>":
 		a.playOrPause()
+	default:
+		a.window.ChoseItem(a.window.searchInput)
+		a.window.searchInput.HandleEvent(input)
 	}
 }
 
 func (a *audioList) WidgetKeys() string {
-	return "j <Down> Select next\n" +
-		"k <Up>   Select prev\n" +
+	return "<C-j>   Select next\n" +
+		"<C-k>    Select prev\n" +
 		"<C-d>    Page Down\n" +
 		"<C-u>    Page Up\n" +
 		"<Enter>  Play or Pause\n" +
