@@ -63,6 +63,7 @@ func (w *Window) Init() {
 
 	w.initMember()
 	w.startPrint()
+	rpc_client.SetOutput(w.output)
 
 	// cronjob
 	go w.playStatus.Cronjob()

@@ -10,12 +10,11 @@ service Play {
 
     rpc Provider(Empty) returns(ProviderReply){}
     rpc SetLocalProvider(LocalProvider) returns(Empty){}
-    rpc SetDir(Dir) returns(Empty){}
 
     rpc SetVolume(VolumeRequest) returns(Empty){}
     rpc Seek(Second) returns(Empty){}
 
-    rpc ListAll(Empty) returns(QueryReplay){}
+    rpc ListAll(Dir) returns(QueryReplay){}
     rpc Search(SearchRequest) returns(QueryReplay){}
 
     rpc Ping(Empty) returns(Empty){}

@@ -7,7 +7,6 @@ import (
 	"log"
 	"net"
 	"os"
-	"path/filepath"
 	"tap/backend/local"
 	"tap/player"
 )
@@ -69,17 +68,18 @@ func (server *Play) SetPlayMode(ctx context.Context, playMode *PlayMode) (*Empty
 	return &Empty{}, nil
 }
 
-func (server *Play) ListAll(ctx context.Context, empty *Empty) (*QueryReplay, error) {
-	all, err := m.ListAll()
+func (server *Play) ListAll(ctx context.Context, dir *Dir) (*QueryReplay, error) {
+	all, err := m.ListAll(dir.Value)
 	if err != nil {
 		return nil, err
 	}
+	log.Println(all)
 	return &QueryReplay{Names: all}, nil
 }
 
 func (server *Play) Search(ctx context.Context, request *SearchRequest) (*QueryReplay, error) {
 	if len(request.Input) == 0 {
-		return server.ListAll(ctx, nil)
+		return server.ListAll(ctx, &Dir{Value: ""})
 	}
 	all, err := m.Search(request.Input)
 	if err != nil {
@@ -107,12 +107,8 @@ func (server *Play) Provider(ctx context.Context, empty *Empty) (*ProviderReply,
 	}, nil
 }
 
-func (server *Play) SetDir(ctx context.Context, dir *Dir) (*Empty, error) {
-	return &Empty{}, nil
-}
-
 func (server *Play) PushInfo(empty *Empty, res Play_PushInfoServer) error {
-	ch := make(chan *PlayAudioInfo, 100)
+	ch := make(chan *PlayAudioInfo, 1)
 	server.pushChan = ch
 	for {
 		select {
@@ -140,16 +136,9 @@ func fommatPlayAudioInfo(authInfo *player.AudioInfo) *PlayAudioInfo {
 		Curr:     authInfo.CurrSecond,
 		Pathinfo: authInfo.Pathinfo,
 		Volume:   authInfo.Volume,
-		Name:     pathToName(authInfo.Pathinfo),
+		Name:     authInfo.Pathinfo,
 		Mode:     m.PlayMode,
 	}
-}
-
-func pathToName(pathinfo string) string {
-	if pathinfo == "" {
-		return ""
-	}
-	return filepath.Base(pathinfo)
 }
 
 func RunServer() {

@@ -96,10 +96,10 @@ func SetVolume(volume float32) bool {
 	return true
 }
 
-func ListAll() []string {
+func ListAll(dir string) []string {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
 	defer cancel()
-	res, err := playerClient.ListAll(ctx, &server.Empty{})
+	res, err := playerClient.ListAll(ctx, &server.Dir{Value: dir})
 	if err != nil {
 		op.Println(err)
 		return []string{}
@@ -151,15 +151,6 @@ func Provider() *server.ProviderReply {
 		return nil
 	}
 	return p
-}
-
-func SetDir(dir string) {
-	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*_TIME_OUT)
-	defer cancel()
-	_, err := playerClient.SetDir(ctx, &server.Dir{Value: dir})
-	if err != nil {
-		op.Println(err)
-	}
 }
 
 func Subscribe(f func(info *server.PlayAudioInfo)) {

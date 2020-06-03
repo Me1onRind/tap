@@ -84,8 +84,7 @@ func (d *dirList) HandleEvent(input string) {
 		d.self.ScrollUp()
 	case "<Enter>", "<Space>":
 		d.currDir = d.dirs[d.self.SelectedRow]
-		rpc_client.SetDir(d.currDir)
-		rows := rpc_client.ListAll()
+		rows := rpc_client.ListAll(d.currDir)
 		d.window.audioList.NotifyRowsChange(rows)
 		d.Print()
 	}

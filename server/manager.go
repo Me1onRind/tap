@@ -60,8 +60,11 @@ func (m *manager) SetPlayMode(mode uint32) {
 
 }
 
-func (m *manager) ListAll() ([]string, error) {
-	return m.Provider.ListAll(m.CurrDir)
+func (m *manager) ListAll(dir string) ([]string, error) {
+	if len(dir) == 0 {
+		dir = m.CurrDir
+	}
+	return m.Provider.ListAll(dir)
 }
 
 func (m *manager) Search(input string) ([]string, error) {

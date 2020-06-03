@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 type LocalProvider struct {
@@ -19,6 +20,10 @@ func NewLocalProvider() *LocalProvider {
 func (p *LocalProvider) ListAll(dir string) ([]string, error) {
 	if items, ok := p.files[dir]; ok {
 		return items, nil
+	}
+
+	if !strings.HasSuffix(dir, "/") {
+		dir += "/"
 	}
 
 	rd, err := ioutil.ReadDir(dir)

@@ -4,10 +4,10 @@ import (
 	"flag"
 	//"tap/backend/local"
 	"context"
-	"fmt"
 	"google.golang.org/grpc"
 	"log"
 	"os"
+	"runtime/debug"
 	"tap/rpc_client"
 	"tap/server"
 	"tap/ui"
@@ -42,7 +42,7 @@ func main() {
 	defer func() {
 		if err := recover(); err != nil {
 			window.Close()
-			fmt.Println(err)
+			debug.PrintStack()
 		}
 	}()
 

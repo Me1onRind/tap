@@ -50,8 +50,12 @@ func (s *searchInput) HandleEvent(input string) {
 	case "<C-l>":
 		s.self.Reset()
 		s.flushAl()
-	case "<Enter>":
+	case "<C-j>":
 		s.window.ChoseItem(s.window.audioList)
+		s.window.audioList.self.ScrollDown()
+	case "<C-k>":
+		s.window.ChoseItem(s.window.audioList)
+		s.window.audioList.self.ScrollUp()
 	default:
 		s.self.HandleInput(input)
 		s.flushAl()
